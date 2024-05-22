@@ -4,7 +4,7 @@ import Button from "./Button";
 
 const Login = () => {
   return (
-    <div className="w-full md:w-[450px]">
+    <div className="m-6 w-full md:w-[450px]">
       <h1 className="text-white text-center font-bold text-4xl mb-10 md:text-6xl">
         Login
       </h1>
@@ -13,7 +13,7 @@ const Login = () => {
         <Input name="password" type="password" />
         <Input name="Confirm password" type="password" />
         <Button text="Login" loading />
-        <Button text="Register" secondary />
+        <Button text="Register" secondary loading />
       </div>
     </div>
   );
