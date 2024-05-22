@@ -18,7 +18,7 @@ function Button({
 }: ButtonProps) {
   return (
     <button
-      className={`flex justify-center gap-3 px-9 py-2 rounded-full text-white border-2 border-white hover:bg-myPink transition-all hover:drop-shadow-lg ${
+      className={`flex justify-center items-center gap-3 px-9 py-2 rounded-full text-white border-2 border-white hover:bg-myPink transition-all hover:drop-shadow-lg ${
         secondary ? "bg-myPink" : "bg-myBlue"
       } ${className} ${loading && "cursor-wait"}`}
       onClick={onClick}
