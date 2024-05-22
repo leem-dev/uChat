@@ -1,5 +1,6 @@
 import React from "react";
 import Input from "./Input";
+import Button from "./Button";
 
 const Login = () => {
   return (
@@ -11,6 +12,8 @@ const Login = () => {
         <Input name="email" type="email" />
         <Input name="password" type="password" />
         <Input name="Confirm password" type="password" />
+        <Button text="Login" loading />
+        <Button text="Register" secondary />
       </div>
     </div>
   );
