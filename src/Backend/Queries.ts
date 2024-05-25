@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./Firebase";
-import { toast } from "react-toastify";
+import { toastError } from "../utils/toast";
+import CatchErr from "../utils/catchErr";
 
 export const BE_signUp = (data: {
   email: string;
@@ -11,12 +12,10 @@ export const BE_signUp = (data: {
   if (email && password) {
     if (password === confirmPassword) {
       createUserWithEmailAndPassword(auth, email, password)
-        .then((userCred) => {
-          console.log(userCred);
+        .then(({ user }) => {
+          console.log(user);
         })
-        .catch((err) => console.log(err));
-    } else console.log("Passwords must match");
-  } else {
-    toast.error("Fields shouldn't be left empty");
-  }
+        .catch((err) => CatchErr(err));
+    } else toastError("Passwords must match");
+  } else toastError("Fields shouldn't be left empty");
 };
