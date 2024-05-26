@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Input from "./Input";
 import Button from "./Button";
 import { BE_signIn, BE_signUp } from "../Backend/Queries";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [login, setLogin] = useState(true);
@@ -10,15 +11,16 @@ const Login = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [signInLoading, setSignInLoading] = useState(false);
+  const goToDashBoard = useNavigate();
 
   const handleSignUp = () => {
     const data = { email, password, confirmPassword };
-    BE_signUp(data, setSignUpLoading, resetDets);
+    BE_signUp(data, setSignUpLoading, resetDets, goToDashBoard);
   };
 
   const handleSignIn = () => {
     const data = { email, password };
-    BE_signIn(data, setSignInLoading, resetDets);
+    BE_signIn(data, setSignInLoading, resetDets, goToDashBoard);
   };
 
   const resetDets = () => {
@@ -32,6 +34,7 @@ const Login = () => {
       <h1 className="text-white text-center font-bold text-4xl mb-10 md:text-6xl">
         {login ? "Login" : "Register"}
       </h1>
+
       <div className="flex flex-col gap-3 bg-white w-full p-6 min-h-[150px] rounded-xl drop-shadow-xl">
         <Input
           name="email"
