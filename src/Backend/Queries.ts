@@ -9,6 +9,7 @@ import { authDataType, setLoadingType, userType } from "../Types";
 import { NavigateFunction } from "react-router-dom";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { defaultUser, setUser } from "../Redux/userSlice";
+import { AppDispatch } from "../Redux/store";
 
 // collection names
 const usersCollection = "users";
@@ -23,7 +24,7 @@ export const BE_signUp = (
   setLoading: setLoadingType,
   reset: () => void,
   goTo: NavigateFunction,
-  dispatch:
+  dispatch: AppDispatch
 ) => {
   const { email, password, confirmPassword } = data;
   // add the spinner till it register the user
@@ -31,8 +32,8 @@ export const BE_signUp = (
   if (email && password) {
     if (password === confirmPassword) {
       createUserWithEmailAndPassword(auth, email, password)
-        .then(({ user }) => {
-          const userInfo = addUserToCollection(
+        .then(async ({ user }) => {
+          const userInfo = await addUserToCollection(
             user.uid,
             user.email || "",
             user.email?.split("@")[0] || "",
@@ -40,7 +41,7 @@ export const BE_signUp = (
           );
 
           // set user info in store and localStorage
-          dispatch(setUser);
+          dispatch(setUser(userInfo));
           // remove spinner when completed
           setLoading(false);
           // refresh the inputs
@@ -62,18 +63,23 @@ export const BE_signIn = (
   data: authDataType,
   setLoading: setLoadingType,
   reset: () => void,
-  goTo: NavigateFunction
+  goTo: NavigateFunction,
+  dispatch: AppDispatch
 ) => {
   const { email, password } = data;
   // add the spinner while it checks to see if user exists
   setLoading(true);
 
   signInWithEmailAndPassword(auth, email, password)
-    .then(({ user }) => {
+    .then(async ({ user }) => {
       // update the user isOnline to true
 
       // get user information
-      const userInfo = getUserInfo(user.uid);
+      const userInfo = await getUserInfo(user.uid);
+
+      // set user in store
+      dispatch(setUser(userInfo));
+
       // remove the spinner if spinner exists
       setLoading(false);
       reset();
