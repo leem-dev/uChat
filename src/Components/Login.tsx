@@ -3,6 +3,8 @@ import Input from "./Input";
 import Button from "./Button";
 import { BE_signIn, BE_signUp } from "../Backend/Queries";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../Redux/store";
 
 const Login = () => {
   const [login, setLogin] = useState(true);
@@ -12,10 +14,11 @@ const Login = () => {
   const [signUpLoading, setSignUpLoading] = useState(false);
   const [signInLoading, setSignInLoading] = useState(false);
   const goToDashBoard = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleSignUp = () => {
     const data = { email, password, confirmPassword };
-    BE_signUp(data, setSignUpLoading, resetDets, goToDashBoard);
+    BE_signUp(data, setSignUpLoading, resetDets, goToDashBoard, dispatch);
   };
 
   const handleSignIn = () => {

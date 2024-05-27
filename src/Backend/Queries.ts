@@ -8,7 +8,7 @@ import CatchErr from "../utils/catchErr";
 import { authDataType, setLoadingType, userType } from "../Types";
 import { NavigateFunction } from "react-router-dom";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
-import { defaultUser } from "../Redux/userSlice";
+import { defaultUser, setUser } from "../Redux/userSlice";
 
 // collection names
 const usersCollection = "users";
@@ -22,7 +22,8 @@ export const BE_signUp = (
   data: authDataType,
   setLoading: setLoadingType,
   reset: () => void,
-  goTo: NavigateFunction
+  goTo: NavigateFunction,
+  dispatch:
 ) => {
   const { email, password, confirmPassword } = data;
   // add the spinner till it register the user
@@ -38,6 +39,8 @@ export const BE_signUp = (
             "imgLink"
           );
 
+          // set user info in store and localStorage
+          dispatch(setUser);
           // remove spinner when completed
           setLoading(false);
           // refresh the inputs

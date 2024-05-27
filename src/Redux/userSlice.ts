@@ -12,14 +12,20 @@ export const defaultUser: userType = {
   bio: "",
 };
 
-const initialState = {};
+const initialState = {
+  // user: [],
+  currentUser: defaultUser,
+  // currentSelectedUser: null
+};
 
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
     setUser: (state, action) => {
+      console.log(action);
       // set logged in user
+      // state.currentUser = action.payload;
     },
     setUsers: (state, action) => {
       // set all users
