@@ -5,9 +5,10 @@ import {
 import { auth, db } from "./Firebase";
 import { toastError } from "../utils/toast";
 import CatchErr from "../utils/catchErr";
-import { authDataType, setLoadingType } from "../Types";
+import { authDataType, setLoadingType, userType } from "../Types";
 import { NavigateFunction } from "react-router-dom";
-import { doc, serverTimestamp, setDoc } from "firebase/firestore";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { defaultUser } from "../Redux/userSlice";
 
 // collection names
 const usersCollection = "users";
@@ -36,6 +37,7 @@ export const BE_signUp = (
             user.email?.split("@")[0] || "",
             "imgLink"
           );
+
           // remove spinner when completed
           setLoading(false);
           // refresh the inputs
@@ -65,7 +67,10 @@ export const BE_signIn = (
 
   signInWithEmailAndPassword(auth, email, password)
     .then(({ user }) => {
-      console.log(user);
+      // update the user isOnline to true
+
+      // get user information
+      const userInfo = getUserInfo(user.uid);
       // remove the spinner if spinner exists
       setLoading(false);
       reset();
@@ -95,4 +100,29 @@ const addUserToCollection = async (
     lastSeen: serverTimestamp(),
     bio: `Hi my name is ${username}. I hope to build amazing projects with typescripts soon`,
   });
+  return getUserInfo(id);
+};
+
+const getUserInfo = async (id: string): Promise<userType> => {
+  const userRef = doc(db, usersCollection, id);
+  const user = await getDoc(userRef);
+
+  if (user.exists()) {
+    const { img, isOnline, username, email, bio, creationTime, lastSeen } =
+      user.data();
+
+    return {
+      id: user.id,
+      img,
+      isOnline,
+      username,
+      email,
+      bio,
+      creationTime,
+      lastSeen,
+    };
+  } else {
+    toastError(`${getUserInfo}: user not found`);
+    return defaultUser;
+  }
 };

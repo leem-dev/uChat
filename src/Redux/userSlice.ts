@@ -1,4 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { userType } from "../Types";
+
+export const defaultUser: userType = {
+  id: "",
+  username: "",
+  email: "",
+  isOnline: false,
+  img: "",
+  creationTime: "",
+  lastSeen: "",
+  bio: "",
+};
 
 const initialState = {};
 
