@@ -23,8 +23,12 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action) => {
+      const user = action.payload;
+      // store user in localStorage
+      localStorage.setItem("uchat_newUser", JSON.stringify(user));
+
       // set logged in user
-      state.currentUser = action.payload;
+      state.currentUser = user;
     },
     setUsers: (state, action) => {
       // set all users
