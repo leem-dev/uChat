@@ -53,8 +53,8 @@ export const BE_signUp = (
           CatchErr(err);
           setLoading(false);
         });
-    } else toastError("Passwords must match");
-  } else toastError("Fields shouldn't be left empty");
+    } else toastError("Passwords must match", setLoading);
+  } else toastError("Fields shouldn't be left empty", setLoading);
 };
 
 // Sign in existing users
@@ -100,6 +100,7 @@ const addUserToCollection = async (
   username: string,
   img: string
 ) => {
+  // create user with userId
   await setDoc(doc(db, usersCollection, id), {
     isOnline: true,
     img,

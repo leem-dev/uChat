@@ -11,8 +11,11 @@ const CatchErr = (err: { code?: string }) => {
   else if (code === "auth/wrong-password") toastError("Invalid password");
   else if (code === "auth/requires-recent-login")
     toastInfo("logout and login before updating your profile");
+  else if (code === "unavailable") toastError("Firebase client is offline");
+  else if (code === "'permission-denied'")
+    toastError("Firebase client is offline");
   else toastError("An error occurred!");
-  console.log(err);
+  console.log(err, err.code);
 };
 
 export default CatchErr;
