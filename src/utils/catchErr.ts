@@ -12,8 +12,10 @@ const CatchErr = (err: { code?: string }) => {
   else if (code === "auth/requires-recent-login")
     toastInfo("logout and login before updating your profile");
   else if (code === "unavailable") toastError("Firebase client is offline");
-  else if (code === "'permission-denied'")
+  else if (code === "permission-denied")
     toastError("Firebase client is offline");
+  else if (code === "auth/invalid-login-credentials")
+    toastError("Invalid Credentials");
   else toastError("An error occurred!");
   console.log(err, err.code);
 };

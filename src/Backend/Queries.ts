@@ -10,6 +10,8 @@ import { NavigateFunction } from "react-router-dom";
 import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
 import { defaultUser, setUser } from "../Redux/userSlice";
 import { AppDispatch } from "../Redux/store";
+import ConvertTime from "../utils/ConvertTime";
+import AvatarGenerator from "../utils/AvatarGenerator";
 
 // collection names
 const usersCollection = "users";
@@ -33,11 +35,14 @@ export const BE_signUp = (
     if (password === confirmPassword) {
       createUserWithEmailAndPassword(auth, email, password)
         .then(async ({ user }) => {
+          // create user avatar with username
+          const imgLink = AvatarGenerator(user.email?.split("@")[0]);
+
           const userInfo = await addUserToCollection(
             user.uid,
             user.email || "",
             user.email?.split("@")[0] || "",
-            "imgLink"
+            imgLink
           );
 
           // set user info in store and localStorage
@@ -128,8 +133,12 @@ const getUserInfo = async (id: string): Promise<userType> => {
       username,
       email,
       bio,
-      creationTime,
-      lastSeen,
+      creationTime: creationTime
+        ? ConvertTime(creationTime.toDate())
+        : "no date yet: userinfo",
+      lastSeen: lastSeen
+        ? ConvertTime(lastSeen.toDate())
+        : "no date yet: userinfo",
     };
   } else {
     toastError(`${getUserInfo}: user not found`);
