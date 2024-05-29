@@ -1,6 +1,8 @@
 import React from "react";
-
+import { BsFillChatFill } from "react-icons/bs";
 import AddListBoard from "./AddListBoard";
+import Icon from "./Icon";
+
 const uChat = require("../Assets/chat.png");
 
 type Props = {};
@@ -15,6 +17,7 @@ function Header() {
       />
       <div className="flex">
         <AddListBoard />
+        <Icon IconName={BsFillChatFill} ping={true} />
       </div>
     </div>
   );

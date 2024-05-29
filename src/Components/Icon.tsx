@@ -32,8 +32,18 @@ function Icon({
       ${loading && "cursor-wait"} ${className}`}
     >
       {loading ? "Loading" : <IconName size={size} />}
+
+      {/* set the ping */}
+      {ping && (
+        <>
+          <span className="absolute -top-1 left-7 w-3 h-3 border-gray-800 rounded-full bg-myPink"></span>
+          <span className="animate-ping absolute -top-1 left-7 w-3 h-3 border-gray-800 rounded-full bg-myPink"></span>
+        </>
+      )}
     </button>
   );
 }
 
 export default Icon;
+
+// <span className="relative inline-flex rounded-full h-3 w-3 bg-sky-500"></span>
