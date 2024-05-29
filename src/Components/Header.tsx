@@ -1,5 +1,6 @@
 import React from "react";
-import Button from "./Button";
+
+import AddListBoard from "./AddListBoard";
 const uChat = require("../Assets/chat.png");
 
 type Props = {};
@@ -13,7 +14,7 @@ function Header() {
         alt="img"
       />
       <div className="flex">
-        <Button text="Add New List Board" secondary />
+        <AddListBoard />
       </div>
     </div>
   );
