@@ -1,5 +1,6 @@
 import React from "react";
 import { BsFillChatFill } from "react-icons/bs";
+import { FiList } from "react-icons/fi";
 import AddListBoard from "./AddListBoard";
 import Icon from "./Icon";
 
@@ -15,9 +16,10 @@ function Header() {
         src={uChat}
         alt="img"
       />
-      <div className="flex">
+      <div className="flex flex-row-reverse md:flex-row items-center justify-center gap-5 flex-wrap">
         <AddListBoard />
         <Icon IconName={BsFillChatFill} ping={true} />
+        <Icon IconName={FiList} />
       </div>
     </div>
   );
