@@ -1,6 +1,7 @@
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signOut,
 } from "firebase/auth";
 import { auth, db } from "./Firebase";
 import { toastError } from "../utils/toast";
@@ -14,7 +15,7 @@ import {
   setDoc,
   updateDoc,
 } from "firebase/firestore";
-import { defaultUser, setUser } from "../Redux/userSlice";
+import { defaultUser, setUser, userStorageName } from "../Redux/userSlice";
 import { AppDispatch } from "../Redux/store";
 import ConvertTime from "../utils/ConvertTime";
 import AvatarGenerator from "../utils/AvatarGenerator";
@@ -69,7 +70,6 @@ export const BE_signUp = (
 };
 
 // Sign in existing users
-
 export const BE_signIn = (
   data: authDataType,
   setLoading: setLoadingType,
@@ -103,6 +103,33 @@ export const BE_signIn = (
       CatchErr(err);
       setLoading(false);
     });
+};
+
+// signOut
+export const BE_signOut = (
+  dispatch: AppDispatch,
+  goTo: NavigateFunction,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+  // logout in firebase
+  signOut(auth)
+    .then(async () => {
+      // route to auth page
+      goTo("/auth");
+
+      // set user offline
+      await updateUserInfo({ isOffline: true });
+
+      // set currentSelected user to default user
+      dispatch(setUser(defaultUser));
+
+      // remove from local storage
+      localStorage.removeItem(userStorageName);
+
+      setLoading(false);
+    })
+    .catch((err) => CatchErr(err));
 };
 
 // add user to collection
@@ -184,8 +211,9 @@ const updateUserInfo = async ({
   }
 };
 
+// get user from local storage
 const getStorageUser = () => {
-  const user = localStorage.getItem("uchat_newUser");
+  const user = localStorage.getItem(userStorageName);
   if (user) return JSON.parse(user);
   else return null;
 };
