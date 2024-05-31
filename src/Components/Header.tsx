@@ -42,7 +42,7 @@ function Header() {
 
   const handleGoToPage = (page: string) => {
     goTo("/dashboard/" + page);
-    if (page) setCurrentPage(page);
+    setCurrentPage(page);
   };
 
   const handleSignOut = () => {
