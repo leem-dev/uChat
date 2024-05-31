@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BsFillChatFill } from "react-icons/bs";
 import { FiList } from "react-icons/fi";
 import AddListBoard from "./AddListBoard";
@@ -6,9 +6,10 @@ import Icon from "./Icon";
 import UserHeaderProfile from "./UserHeaderProfile";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../Redux/store";
-import { Link, useNavigate } from "react-router-dom";
-import { BE_signOut } from "../Backend/Queries";
+import { useNavigate } from "react-router-dom";
+import { BE_signOut, getStorageUser } from "../Backend/Queries";
 import Spinner from "./Spinner";
+import { setUser } from "../Redux/userSlice";
 
 const uChat = require("../Assets/chat.png");
 
@@ -20,9 +21,28 @@ function Header() {
   const dispatch = useDispatch();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
 
+  const userDetails = getStorageUser();
+
+  useEffect(() => {
+    if (userDetails?.id) {
+      dispatch(setUser(userDetails));
+    } else {
+      goTo("/auth");
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   if (!currentUser?.id) goTo("/auth");
+  // }, [goTo, currentUser]);
+
+  useEffect(() => {
+    const page = getCurrentPage();
+    if (page) goTo("/dashboard/" + page);
+  }, [goTo]);
+
   const handleGoToPage = (page: string) => {
     goTo("/dashboard/" + page);
-    setCurrentPage(page);
+    if (page) setCurrentPage(page);
   };
 
   const handleSignOut = () => {
@@ -46,10 +66,10 @@ function Header() {
       />
       <div className="flex flex-row-reverse md:flex-row items-center justify-center gap-5 flex-wrap">
         {getCurrentPage() === "chat" ? (
-          <Icon IconName={FiList} onClick={() => handleGoToPage("list")} />
+          <Icon IconName={FiList} onClick={() => handleGoToPage("")} />
         ) : getCurrentPage() === "profile" ? (
           <>
-            <Icon IconName={FiList} onClick={() => handleGoToPage("list")} />
+            <Icon IconName={FiList} onClick={() => handleGoToPage("")} />
 
             <Icon
               IconName={BsFillChatFill}

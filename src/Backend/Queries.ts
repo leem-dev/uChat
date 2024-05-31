@@ -132,6 +132,13 @@ export const BE_signOut = (
     .catch((err) => CatchErr(err));
 };
 
+// get user from local storage
+export const getStorageUser = () => {
+  const user = localStorage.getItem(userStorageName);
+  if (user) return JSON.parse(user);
+  else return null;
+};
+
 // add user to collection
 const addUserToCollection = async (
   id: string,
@@ -209,11 +216,4 @@ const updateUserInfo = async ({
       lastSeen: serverTimestamp(),
     });
   }
-};
-
-// get user from local storage
-const getStorageUser = () => {
-  const user = localStorage.getItem(userStorageName);
-  if (user) return JSON.parse(user);
-  else return null;
 };
