@@ -6,9 +6,11 @@ import {
 import { auth, db } from "./Firebase";
 import { toastError } from "../utils/toast";
 import CatchErr from "../utils/catchErr";
-import { authDataType, setLoadingType, userType } from "../Types";
+import { authDataType, setLoadingType, taskListType, userType } from "../Types";
 import { NavigateFunction } from "react-router-dom";
 import {
+  addDoc,
+  collection,
   doc,
   getDoc,
   serverTimestamp,
@@ -19,6 +21,7 @@ import { defaultUser, setUser, userStorageName } from "../Redux/userSlice";
 import { AppDispatch } from "../Redux/store";
 import ConvertTime from "../utils/ConvertTime";
 import AvatarGenerator from "../utils/AvatarGenerator";
+import { addTaskList, defaultTaskList } from "../Redux/taskListSlice";
 
 // collection names
 const usersCollection = "users";
@@ -215,5 +218,35 @@ const updateUserInfo = async ({
       ...(isOffline && { isOnline: false }),
       lastSeen: serverTimestamp(),
     });
+  }
+};
+
+// -------------------------------TASK LIST-------------------------
+
+export const BE_addTaskList = async (
+  dispatch: AppDispatch,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+  const { title } = defaultTaskList;
+  const list = await addDoc(collection(db, taskListCollection), {
+    title,
+    userId: getStorageUser().id,
+  });
+
+  const newDocSnap = await getDoc(doc(db, list.path));
+
+  if (newDocSnap.exists()) {
+    const newlyAddedDoc: taskListType = {
+      id: newDocSnap.id,
+      title: newDocSnap.data().title,
+    };
+
+    // dispatch addTaskList
+    dispatch(addTaskList(newlyAddedDoc));
+    setLoading(false);
+  } else {
+    toastError("BE_addTaskList:No such doc");
+    setLoading(false);
   }
 };

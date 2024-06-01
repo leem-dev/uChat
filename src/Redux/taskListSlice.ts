@@ -23,7 +23,12 @@ const taskListSlice = createSlice({
   initialState,
   reducers: {
     setTaskList: (state, action) => {},
-    addTaskList: (state, action) => {},
+    addTaskList: (state, action) => {
+      const newTaskList = action.payload;
+      newTaskList.editMode = true;
+      newTaskList.tasks = [];
+      state.currentTaskList.unshift(newTaskList);
+    },
   },
 });
 
