@@ -12,6 +12,7 @@ module.exports = {
       colors: {
         myBlue: "#0A32B3",
         myPink: "#BD365D",
+        myTasksBg: "#d3f0f9",
       },
       backgroundImage: (theme) => ({
         pattern:

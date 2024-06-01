@@ -1,5 +1,6 @@
 import React from "react";
 import { IconType } from "react-icons";
+import Spinner from "./Spinner";
 
 type IconProps = {
   IconName: IconType;
@@ -17,7 +18,7 @@ function Icon({
   loading,
   onClick,
   ping,
-  reduceOpacityOnHover,
+  reduceOpacityOnHover = true,
   size,
 }: IconProps) {
   return (
@@ -31,7 +32,7 @@ function Icon({
       }
       ${loading && "cursor-wait"} ${className}`}
     >
-      {loading ? "Loading" : <IconName size={size} />}
+      {loading ? <Spinner /> : <IconName size={size} />}
 
       {/* set the ping */}
       {ping && (

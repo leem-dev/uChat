@@ -66,15 +66,24 @@ function Header() {
       />
       <div className="flex flex-row-reverse md:flex-row items-center justify-center gap-5 flex-wrap">
         {getCurrentPage() === "chat" ? (
-          <Icon IconName={FiList} onClick={() => handleGoToPage("")} />
+          <Icon
+            IconName={FiList}
+            onClick={() => handleGoToPage("")}
+            reduceOpacityOnHover={false}
+          />
         ) : getCurrentPage() === "profile" ? (
           <>
-            <Icon IconName={FiList} onClick={() => handleGoToPage("")} />
+            <Icon
+              IconName={FiList}
+              onClick={() => handleGoToPage("")}
+              reduceOpacityOnHover={false}
+            />
 
             <Icon
               IconName={BsFillChatFill}
               ping={true}
               onClick={() => handleGoToPage("chat")}
+              reduceOpacityOnHover={false}
             />
           </>
         ) : (
@@ -84,6 +93,7 @@ function Header() {
               IconName={BsFillChatFill}
               ping={true}
               onClick={() => handleGoToPage("chat")}
+              reduceOpacityOnHover={false}
             />
           </>
         )}
