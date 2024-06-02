@@ -13,15 +13,22 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
+  query,
   serverTimestamp,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 import { defaultUser, setUser, userStorageName } from "../Redux/userSlice";
 import { AppDispatch } from "../Redux/store";
 import ConvertTime from "../utils/ConvertTime";
 import AvatarGenerator from "../utils/AvatarGenerator";
-import { addTaskList, defaultTaskList } from "../Redux/taskListSlice";
+import {
+  addTaskList,
+  defaultTaskList,
+  setTaskList,
+} from "../Redux/taskListSlice";
 
 // collection names
 const usersCollection = "users";
@@ -223,6 +230,7 @@ const updateUserInfo = async ({
 
 // -------------------------------TASK LIST-------------------------
 
+// add a single task list
 export const BE_addTaskList = async (
   dispatch: AppDispatch,
   setLoading: setLoadingType
@@ -250,3 +258,32 @@ export const BE_addTaskList = async (
     setLoading(false);
   }
 };
+
+// get all task list
+export const BE_getTaskList = async (
+  dispatch: AppDispatch,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+
+  // get user task list
+  const taskList = getAllTaskList();
+
+  //  get taskList from firestore
+  // dispatch(setTaskList());
+  setLoading(false);
+};
+
+const getAllTaskList = async () => {
+  const q = query(
+    collection(db, taskListCollection),
+    where("userId", "==", getStorageUser().id)
+  );
+  const taskListSnapshot = await getDocs(q);
+
+  taskListSnapshot.forEach((doc) => {
+    console.log(doc.id, " => ", doc.data());
+  });
+};
+
+getAllTaskList();
