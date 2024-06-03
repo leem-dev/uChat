@@ -267,10 +267,10 @@ export const BE_getTaskList = async (
   setLoading(true);
 
   // get user task list
-  const taskList = getAllTaskList();
+  const taskList = await getAllTaskList();
 
   //  get taskList from firestore
-  // dispatch(setTaskList());
+  dispatch(setTaskList(taskList));
   setLoading(false);
 };
 
@@ -280,10 +280,16 @@ const getAllTaskList = async () => {
     where("userId", "==", getStorageUser().id)
   );
   const taskListSnapshot = await getDocs(q);
+  const taskList: taskListType[] = [];
 
   taskListSnapshot.forEach((doc) => {
-    console.log(doc.id, " => ", doc.data());
+    const { title } = doc.data();
+    taskList.push({
+      id: doc.id,
+      title,
+      editMode: false,
+      tasks: [],
+    });
   });
+  return taskList;
 };
-
-getAllTaskList();
