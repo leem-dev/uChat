@@ -18,7 +18,6 @@ const AddListBoard = () => {
     <>
       <Button
         text="Add New List Board"
-        secondary
         className="hidden md:flex"
         loading={addLoading}
         onClick={handleAddTaskList}
