@@ -27,6 +27,7 @@ import AvatarGenerator from "../utils/AvatarGenerator";
 import {
   addTaskList,
   defaultTaskList,
+  saveTaskListTitle,
   setTaskList,
 } from "../Redux/taskListSlice";
 
@@ -272,6 +273,26 @@ export const BE_getTaskList = async (
   //  get taskList from firestore
   dispatch(setTaskList(taskList));
   setLoading(false);
+};
+
+export const BE_saveTaskList = async (
+  dispatch: AppDispatch,
+  setLoading: setLoadingType,
+  listId: string,
+  title: string
+) => {
+  setLoading(true);
+  await updateDoc(doc(db, taskListCollection, listId), { title });
+
+  const updatedTaskList = await getDoc(doc(db, taskListCollection, listId));
+  setLoading(false);
+
+  // dispatch to save task list
+  dispatch(
+    // updatedTaskList.data() will give {title}
+    // use spread operator to give only title.
+    saveTaskListTitle({ id: updatedTaskList.id, ...updatedTaskList.data() })
+  );
 };
 
 const getAllTaskList = async () => {

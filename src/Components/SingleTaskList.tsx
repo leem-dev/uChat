@@ -9,6 +9,10 @@ import {
 } from "react-icons/md";
 import Tasks from "./Tasks";
 import { taskListType } from "../Types";
+import { BE_saveTaskList } from "../Backend/Queries";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../Redux/store";
+import { taskListSwitchEditMode } from "../Redux/taskListSlice";
 
 type SingleTaskListPropTypes = {
   singleTaskList: taskListType;
@@ -21,8 +25,18 @@ const SingleTaskList = forwardRef(
   ) => {
     const { id, title, editMode, tasks } = singleTaskList;
     const [taskListTitle, setTaskListTitle] = useState(title);
+    const [saveLoading, setSaveLoading] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
 
-    const handleSaveTaskListTitle = () => {};
+    const handleSaveTaskListTitle = () => {
+      if (id) {
+        BE_saveTaskList(dispatch, setSaveLoading, id, taskListTitle);
+      }
+    };
+
+    const checkEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter") handleSaveTaskListTitle();
+    };
 
     return (
       <div ref={ref} className="relative">
@@ -31,6 +45,7 @@ const SingleTaskList = forwardRef(
             {editMode ? (
               <input
                 value={taskListTitle}
+                onKeyDown={(event) => checkEnterKey(event)}
                 onChange={(event) => setTaskListTitle(event.target.value)}
                 className="flex-1 bg-transparent placeholder-gray-300 px-3 py-1 border-[1px] border-white rounded-md"
                 placeholder="Enter task list title"
@@ -44,7 +59,12 @@ const SingleTaskList = forwardRef(
             <div>
               <Icon
                 IconName={editMode ? MdSave : MdEdit}
-                onClick={() => (editMode ? handleSaveTaskListTitle() : null)}
+                onClick={() =>
+                  editMode
+                    ? handleSaveTaskListTitle()
+                    : dispatch(taskListSwitchEditMode({ id }))
+                }
+                loading={editMode && saveLoading}
               />
               <Icon IconName={MdDelete} />
               <Icon IconName={MdKeyboardArrowDown} />
