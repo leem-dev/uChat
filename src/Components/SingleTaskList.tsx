@@ -9,7 +9,7 @@ import {
 } from "react-icons/md";
 import Tasks from "./Tasks";
 import { taskListType } from "../Types";
-import { BE_saveTaskList } from "../Backend/Queries";
+import { BE_deleteTaskList, BE_saveTaskList } from "../Backend/Queries";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../Redux/store";
 import { taskListSwitchEditMode } from "../Redux/taskListSlice";
@@ -26,6 +26,7 @@ const SingleTaskList = forwardRef(
     const { id, title, editMode, tasks } = singleTaskList;
     const [taskListTitle, setTaskListTitle] = useState(title);
     const [saveLoading, setSaveLoading] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
 
     const handleSaveTaskListTitle = () => {
@@ -36,6 +37,10 @@ const SingleTaskList = forwardRef(
 
     const checkEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
       if (event.key === "Enter") handleSaveTaskListTitle();
+    };
+
+    const handleDelete = () => {
+      if (id && tasks) BE_deleteTaskList(id, tasks, dispatch, setDeleteLoading);
     };
 
     return (
@@ -66,7 +71,11 @@ const SingleTaskList = forwardRef(
                 }
                 loading={editMode && saveLoading}
               />
-              <Icon IconName={MdDelete} />
+              <Icon
+                onClick={handleDelete}
+                IconName={MdDelete}
+                loading={deleteLoading}
+              />
               <Icon IconName={MdKeyboardArrowDown} />
             </div>
           </div>

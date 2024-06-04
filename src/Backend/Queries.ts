@@ -6,11 +6,18 @@ import {
 import { auth, db } from "./Firebase";
 import { toastError } from "../utils/toast";
 import CatchErr from "../utils/catchErr";
-import { authDataType, setLoadingType, taskListType, userType } from "../Types";
+import {
+  authDataType,
+  setLoadingType,
+  taskListType,
+  taskType,
+  userType,
+} from "../Types";
 import { NavigateFunction } from "react-router-dom";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -27,6 +34,7 @@ import AvatarGenerator from "../utils/AvatarGenerator";
 import {
   addTaskList,
   defaultTaskList,
+  deleteTaskList,
   saveTaskListTitle,
   setTaskList,
 } from "../Redux/taskListSlice";
@@ -275,6 +283,7 @@ export const BE_getTaskList = async (
   setLoading(false);
 };
 
+// save task list title
 export const BE_saveTaskList = async (
   dispatch: AppDispatch,
   setLoading: setLoadingType,
@@ -295,6 +304,36 @@ export const BE_saveTaskList = async (
   );
 };
 
+// delete task list
+export const BE_deleteTaskList = async (
+  listId: string,
+  tasks: taskType[],
+  dispatch: AppDispatch,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+
+  // looping through tasks and delete
+  if (tasks.length > 0) {
+    for (let i = 0; i < tasks.length; i++) {
+      const { id } = tasks[i];
+      if (id) BE_deleteTask(listId, id, dispatch);
+    }
+  }
+
+  // delete task list board
+  const listRef = doc(db, taskListCollection, listId);
+  await deleteDoc(listRef);
+  const deletedTaskList = await getDoc(listRef);
+
+  if (!deletedTaskList.exists()) {
+    setLoading(false);
+    // dispatch delete task list and update state
+    dispatch(deleteTaskList(listId));
+  }
+};
+
+// get all user tasklist
 const getAllTaskList = async () => {
   const q = query(
     collection(db, taskListCollection),
@@ -313,4 +352,26 @@ const getAllTaskList = async () => {
     });
   });
   return taskList;
+};
+
+// ----------------------------TASK-------------------------
+
+// delete task
+export const BE_deleteTask = async (
+  listId: string,
+  id: string,
+  dispatch: AppDispatch,
+  setLoading?: setLoadingType
+) => {
+  if (setLoading) setLoading(true);
+
+  // get the task reference
+  const taskRef = doc(db, taskListCollection, listId, tasksCollection, id);
+  await deleteDoc(taskRef);
+
+  const deletedTask = await getDoc(taskRef);
+  if (!deletedTask.exists()) {
+    if (setLoading) setLoading(false);
+    // dispatch(deleteTask)
+  }
 };
