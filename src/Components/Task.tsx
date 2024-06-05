@@ -1,7 +1,10 @@
 import React, { forwardRef, useState } from "react";
 import Icon from "./Icon";
-import { MdDelete, MdEdit } from "react-icons/md";
+import { MdDelete, MdEdit, MdSave } from "react-icons/md";
 import { taskType } from "../Types";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "../Redux/store";
+import { collapseTask } from "../Redux/taskListSlice";
 
 type TaskType = {
   task: taskType;
@@ -16,6 +19,7 @@ const Task = forwardRef(
     const { id, title, description, editMode, collapsed } = task;
     const [homeTitle, setHomeTitle] = useState(title);
     const [homeDescription, setHomeDescription] = useState(description);
+    const dispatch = useDispatch<AppDispatch>();
 
     return (
       <div
@@ -31,7 +35,12 @@ const Task = forwardRef(
               placeholder="task title"
             />
           ) : (
-            <p className="cursor-pointer">{title}</p>
+            <p
+              onClick={() => dispatch(collapseTask({ listId, taskId: id }))}
+              className="cursor-pointer"
+            >
+              {title}
+            </p>
           )}
         </div>
         {!collapsed && (
@@ -50,7 +59,7 @@ const Task = forwardRef(
               )}
 
               <div className="flex justify-end">
-                <Icon IconName={MdEdit} />
+                <Icon IconName={editMode ? MdSave : MdEdit} />
                 <Icon IconName={MdDelete} />
               </div>
             </div>
