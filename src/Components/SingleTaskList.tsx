@@ -9,7 +9,11 @@ import {
 } from "react-icons/md";
 import Tasks from "./Tasks";
 import { taskListType } from "../Types";
-import { BE_deleteTaskList, BE_saveTaskList } from "../Backend/Queries";
+import {
+  BE_addTask,
+  BE_deleteTaskList,
+  BE_saveTaskList,
+} from "../Backend/Queries";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../Redux/store";
 import { taskListSwitchEditMode } from "../Redux/taskListSlice";
@@ -27,6 +31,7 @@ const SingleTaskList = forwardRef(
     const [taskListTitle, setTaskListTitle] = useState(title);
     const [saveLoading, setSaveLoading] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
+    const [addTaskLoading, setAddTaskLoading] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
 
     const handleSaveTaskListTitle = () => {
@@ -41,6 +46,10 @@ const SingleTaskList = forwardRef(
 
     const handleDelete = () => {
       if (id && tasks) BE_deleteTaskList(id, tasks, dispatch, setDeleteLoading);
+    };
+
+    const handleAddTask = () => {
+      if (id) BE_addTask(dispatch, id, setAddTaskLoading);
     };
 
     return (
@@ -79,12 +88,14 @@ const SingleTaskList = forwardRef(
               <Icon IconName={MdKeyboardArrowDown} />
             </div>
           </div>
-          <Tasks />
+          {id && <Tasks tasks={tasks || []} listId={id} />}
         </div>
         <Icon
+          onClick={handleAddTask}
           IconName={MdAdd}
           className="absolute -top-5 -left-4 p-2 drop-shadow-lg hover:bg-myPink"
           reduceOpacityOnHover={false}
+          loading={addTaskLoading}
         />
       </div>
     );

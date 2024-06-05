@@ -32,7 +32,9 @@ import { AppDispatch } from "../Redux/store";
 import ConvertTime from "../utils/ConvertTime";
 import AvatarGenerator from "../utils/AvatarGenerator";
 import {
+  addTask,
   addTaskList,
+  defaultTask,
   defaultTaskList,
   deleteTaskList,
   saveTaskListTitle,
@@ -354,7 +356,7 @@ const getAllTaskList = async () => {
   return taskList;
 };
 
-// ----------------------------TASK-------------------------
+// ----------------------------TASK-------------------------------
 
 // delete task
 export const BE_deleteTask = async (
@@ -373,5 +375,37 @@ export const BE_deleteTask = async (
   if (!deletedTask.exists()) {
     if (setLoading) setLoading(false);
     // dispatch(deleteTask)
+  }
+};
+
+// add task
+export const BE_addTask = async (
+  dispatch: AppDispatch,
+  listId: string,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+
+  const task = await addDoc(
+    collection(db, taskListCollection, listId, tasksCollection),
+    {
+      ...defaultTask,
+    }
+  );
+
+  const newTaskSnapShot = await getDoc(doc(db, task.path));
+  if (newTaskSnapShot.exists()) {
+    const { title, description } = newTaskSnapShot.data();
+    const newTask: taskType = {
+      id: newTaskSnapShot.id,
+      title,
+      description,
+    };
+    // add in store
+    dispatch(addTask({ listId, newTask }));
+    setLoading(false);
+  } else {
+    toastError("BE_addTask: No such document");
+    setLoading(false);
   }
 };
