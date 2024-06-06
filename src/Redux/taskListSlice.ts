@@ -80,7 +80,7 @@ const taskListSlice = createSlice({
       state.currentTaskList = updatedList;
     },
     collapseTask: (state, action) => {
-      const { listId, taskId } = action.payload;
+      const { listId, id } = action.payload;
       const taskList = state.currentTaskList.find((task) => task.id === listId);
       const listIndex = state.currentTaskList.findIndex(
         (task) => task.id === listId
@@ -88,12 +88,27 @@ const taskListSlice = createSlice({
 
       // collapse and open tasks
       taskList?.tasks?.map((task) => {
-        if (task.id === taskId) {
+        if (task.id === id) {
           task.collapsed = !task.collapsed;
         }
       });
 
       if (taskList) state.currentTaskList[listIndex] = taskList;
+    },
+    taskSwitchEditMode: (state, action) => {
+      const { listId, id, value } = action.payload;
+      state.currentTaskList = state.currentTaskList.map((taskLi) => {
+        if (taskLi.id === listId) {
+          const updatedTask = taskLi.tasks?.map((task) => {
+            if (task.id === id) {
+              task.editMode = value !== undefined ? value : true;
+            }
+            return task;
+          });
+          taskLi.tasks = updatedTask;
+        }
+        return taskLi;
+      });
     },
   },
 });
@@ -106,5 +121,6 @@ export const {
   deleteTaskList,
   addTask,
   collapseTask,
+  taskSwitchEditMode,
 } = taskListSlice.actions;
 export default taskListSlice.reducer;
