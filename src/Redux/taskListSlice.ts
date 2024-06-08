@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { taskListType, taskType } from "../Types";
+import Tasks from "../Components/Tasks";
 
 export const defaultTaskList: taskListType = {
   title: "Simple Task List",
@@ -127,6 +128,18 @@ const taskListSlice = createSlice({
 
       state.currentTaskList = updatedTaskList;
     },
+    setTaskListTasks: (state, action) => {
+      const { listId, tasks } = action.payload;
+
+      const taskList = state.currentTaskList.map((taskLi) => {
+        if (taskLi.id === listId) {
+          taskLi.tasks = tasks;
+        }
+        return taskLi;
+      });
+
+      state.currentTaskList = taskList;
+    },
   },
 });
 
@@ -140,5 +153,6 @@ export const {
   collapseTask,
   taskSwitchEditMode,
   saveTask,
+  setTaskListTasks,
 } = taskListSlice.actions;
 export default taskListSlice.reducer;
