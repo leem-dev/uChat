@@ -40,6 +40,10 @@ const Task = forwardRef(
       BE_saveTask(dispatch, listId, taskData, setSaveLoading);
     };
 
+    const checkEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === "Enter") handleSave();
+    };
+
     return (
       <div
         ref={ref}
@@ -86,11 +90,13 @@ const Task = forwardRef(
                   }
                   IconName={editMode ? MdSave : MdEdit}
                   loading={editMode && saveLoading}
+                  size={16}
                 />
                 <Icon
                   onClick={handleDelete}
                   IconName={MdDelete}
                   loading={deleteLoading}
+                  size={16}
                 />
               </div>
             </div>

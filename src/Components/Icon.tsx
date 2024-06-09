@@ -19,7 +19,7 @@ function Icon({
   onClick,
   ping,
   reduceOpacityOnHover = true,
-  size,
+  size = 20,
 }: IconProps) {
   return (
     <button
