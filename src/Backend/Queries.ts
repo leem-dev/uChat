@@ -36,6 +36,7 @@ import {
   addTaskList,
   defaultTask,
   defaultTaskList,
+  deleteTask,
   deleteTaskList,
   saveTask,
   saveTaskListTitle,
@@ -376,7 +377,7 @@ export const BE_deleteTask = async (
   const deletedTask = await getDoc(taskRef);
   if (!deletedTask.exists()) {
     if (setLoading) setLoading(false);
-    // dispatch(deleteTask)
+    dispatch(deleteTask({ listId, id }));
   }
 };
 

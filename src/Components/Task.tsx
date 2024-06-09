@@ -5,7 +5,7 @@ import { taskType } from "../Types";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../Redux/store";
 import { collapseTask, taskSwitchEditMode } from "../Redux/taskListSlice";
-import { BE_saveTask } from "../Backend/Queries";
+import { BE_deleteTask, BE_saveTask } from "../Backend/Queries";
 
 type TaskType = {
   task: taskType;
@@ -21,7 +21,12 @@ const Task = forwardRef(
     const [homeTitle, setHomeTitle] = useState(title);
     const [homeDescription, setHomeDescription] = useState(description);
     const [saveLoading, setSaveLoading] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
+
+    const handleDelete = () => {
+      if (id) BE_deleteTask(listId, id, dispatch, setDeleteLoading);
+    };
 
     const handleSave = () => {
       const taskData: taskType = {
@@ -82,7 +87,11 @@ const Task = forwardRef(
                   IconName={editMode ? MdSave : MdEdit}
                   loading={editMode && saveLoading}
                 />
-                <Icon IconName={MdDelete} />
+                <Icon
+                  onClick={handleDelete}
+                  IconName={MdDelete}
+                  loading={deleteLoading}
+                />
               </div>
             </div>
           </div>
