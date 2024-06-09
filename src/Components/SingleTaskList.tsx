@@ -18,6 +18,7 @@ import {
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../Redux/store";
 import { taskListSwitchEditMode } from "../Redux/taskListSlice";
+import { TaskListTasksLoader } from "./Loaders";
 
 type SingleTaskListPropTypes = {
   singleTaskList: taskListType;
@@ -95,12 +96,16 @@ const SingleTaskList = forwardRef(
               <Icon IconName={MdKeyboardArrowDown} />
             </div>
           </div>
-          {id && <Tasks tasks={tasks || []} listId={id} />}
+          {tasksLoading ? (
+            <TaskListTasksLoader />
+          ) : (
+            id && <Tasks tasks={tasks || []} listId={id} />
+          )}
         </div>
         <Icon
           onClick={handleAddTask}
           IconName={MdAdd}
-          className="absolute -top-5 -left-4 p-2 drop-shadow-lg hover:bg-myPink"
+          className="absolute -top-5 -left-4 p-2 drop-shadow-lg"
           reduceOpacityOnHover={false}
           loading={addTaskLoading}
         />

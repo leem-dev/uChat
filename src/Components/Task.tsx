@@ -29,6 +29,7 @@ const Task = forwardRef(
         title: homeTitle,
         description: homeDescription,
       };
+
       console.log(taskData);
 
       BE_saveTask(dispatch, listId, taskData, setSaveLoading);

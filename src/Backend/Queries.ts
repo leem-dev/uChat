@@ -428,7 +428,8 @@ export const BE_saveTask = async (
     if (updatedTask.exists()) {
       setLoading(false);
       // dispatch
-      dispatch(saveTask({ listId, id: updatedTask, ...updatedTask.data() }));
+      const taskData = { id: updatedTask.id, ...updatedTask.data() };
+      dispatch(saveTask({ listId, ...taskData }));
     } else toastError("BE_saveTask: updated task not found");
   } else toastError("BE_saveTask: id not found");
 };
@@ -447,7 +448,7 @@ export const getTasksForTaskList = async (
   const tasks: taskType[] = [];
 
   // if the tasks snap shot is not empty
-  if (tasksSnapshot.empty) {
+  if (!tasksSnapshot.empty) {
     tasksSnapshot.forEach((task) => {
       const { title, description } = task.data();
       tasks.push({
