@@ -25,7 +25,7 @@ function Icon({
     <button
       onClick={onClick}
       disabled={loading}
-      className={`relative p-3 rounded-full  cursor-pointer hover:bg-myBlue ${
+      className={`relative p-3 rounded-full  cursor-pointer hover:bg-myBlue transition-all ${
         reduceOpacityOnHover
           ? "hover:bg-opacity-30"
           : "bg-myBlue hover:bg-myPink text-white border-2 border-white hover:drop-shadow-lg"

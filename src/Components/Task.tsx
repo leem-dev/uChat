@@ -40,10 +40,6 @@ const Task = forwardRef(
       BE_saveTask(dispatch, listId, taskData, setSaveLoading);
     };
 
-    const checkEnterKey = (event: React.KeyboardEvent<HTMLInputElement>) => {
-      if (event.key === "Enter") handleSave();
-    };
-
     return (
       <div
         ref={ref}

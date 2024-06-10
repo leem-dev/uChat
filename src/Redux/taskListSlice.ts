@@ -96,6 +96,24 @@ const taskListSlice = createSlice({
 
       if (taskList) state.currentTaskList[listIndex] = taskList;
     },
+    collapseAllTask: (state, action) => {
+      const { listId, value } = action.payload;
+      const taskList = state.currentTaskList.find(
+        (taskLi) => taskLi.id === listId
+      );
+      const listIdIndex = state.currentTaskList.findIndex(
+        (taskLi) => taskLi.id === listId
+      );
+
+      // collapse all and turn off editmode for all tasks
+      taskList?.tasks?.map((task) => {
+        task.collapsed = value !== undefined ? value : true;
+        task.editMode = false;
+        return task;
+      });
+
+      if (taskList) state.currentTaskList[listIdIndex] = taskList;
+    },
     taskSwitchEditMode: (state, action) => {
       const { listId, id, value } = action.payload;
       state.currentTaskList = state.currentTaskList.map((taskLi) => {
@@ -165,5 +183,6 @@ export const {
   saveTask,
   setTaskListTasks,
   deleteTask,
+  collapseAllTask,
 } = taskListSlice.actions;
 export default taskListSlice.reducer;

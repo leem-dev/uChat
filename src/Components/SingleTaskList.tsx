@@ -17,7 +17,10 @@ import {
 } from "../Backend/Queries";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../Redux/store";
-import { taskListSwitchEditMode } from "../Redux/taskListSlice";
+import {
+  collapseAllTask,
+  taskListSwitchEditMode,
+} from "../Redux/taskListSlice";
 import { TaskListTasksLoader } from "./Loaders";
 
 type SingleTaskListPropTypes = {
@@ -29,18 +32,30 @@ const SingleTaskList = forwardRef(
     { singleTaskList }: SingleTaskListPropTypes,
     ref: React.LegacyRef<HTMLDivElement> | undefined
   ) => {
-    const { id, title, editMode, tasks } = singleTaskList;
+    const { id, title, editMode, tasks = [] } = singleTaskList;
     const [taskListTitle, setTaskListTitle] = useState(title);
     const [saveLoading, setSaveLoading] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
     const [addTaskLoading, setAddTaskLoading] = useState(false);
     const [tasksLoading, setTasksLoading] = useState(false);
+    const [allCollapsed, setAllCollapsed] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
 
     useEffect(() => {
       // get task
       if (id) getTasksForTaskList(dispatch, id, setTasksLoading);
     }, [dispatch, id]);
+
+    useEffect(() => {
+      const checkAllCollapsed = () => {
+        for (let i = 0; i < tasks?.length; i++) {
+          const task = tasks[i];
+          if (!task.collapsed) return setAllCollapsed(false);
+        }
+        return setAllCollapsed(true);
+      };
+      checkAllCollapsed();
+    }, [tasks]);
 
     const handleSaveTaskListTitle = () => {
       if (id) {
@@ -58,6 +73,14 @@ const SingleTaskList = forwardRef(
 
     const handleAddTask = () => {
       if (id) BE_addTask(dispatch, id, setAddTaskLoading);
+    };
+
+    const handleCollapsedClick = () => {
+      if (allCollapsed) {
+        return dispatch(collapseAllTask({ listId: id, value: false }));
+      }
+
+      return dispatch(collapseAllTask({ listId: id }));
     };
 
     return (
@@ -93,7 +116,11 @@ const SingleTaskList = forwardRef(
                 IconName={MdDelete}
                 loading={deleteLoading}
               />
-              <Icon IconName={MdKeyboardArrowDown} />
+              <Icon
+                IconName={MdKeyboardArrowDown}
+                className={`${allCollapsed ? "rotate-180" : "rotate-0"} `}
+                onClick={handleCollapsedClick}
+              />
             </div>
           </div>
           {tasksLoading ? (
