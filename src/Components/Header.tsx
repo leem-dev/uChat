@@ -29,7 +29,7 @@ function Header() {
     } else {
       goTo("/auth");
     }
-  }, []);
+  }, [dispatch, goTo]);
 
   // useEffect(() => {
   //   if (!currentUser?.id) goTo("/auth");

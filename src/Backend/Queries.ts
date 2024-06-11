@@ -139,9 +139,6 @@ export const BE_signOut = (
   // logout in firebase
   signOut(auth)
     .then(async () => {
-      // route to auth page
-      goTo("/auth");
-
       // set user offline
       await updateUserInfo({ isOffline: true });
 
@@ -150,6 +147,9 @@ export const BE_signOut = (
 
       // remove from local storage
       localStorage.removeItem(userStorageName);
+
+      // route to auth page
+      goTo("/auth");
 
       setLoading(false);
     })
