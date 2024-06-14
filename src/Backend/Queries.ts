@@ -2,9 +2,11 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
+  updateEmail,
+  updatePassword,
 } from "firebase/auth";
 import { auth, db } from "./Firebase";
-import { toastError } from "../utils/toast";
+import { toastError, toastSuccess } from "../utils/toast";
 import CatchErr from "../utils/catchErr";
 import {
   authDataType,
@@ -161,6 +163,54 @@ export const getStorageUser = () => {
   const user = localStorage.getItem(userStorageName);
   if (user) return JSON.parse(user);
   else return null;
+};
+
+// save user profile
+export const BE_saveProfile = async (
+  dispatch: AppDispatch,
+  data: { email: string; username: string; password: string; img: string },
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+  const { email, username, password, img } = data;
+  const id = getStorageUser().id;
+
+  if (id && auth.currentUser) {
+    // update email if its present
+    if (email) {
+      updateEmail(auth.currentUser, email)
+        .then(() => {
+          toastSuccess("Email Updated Successfully");
+        })
+        .catch((err) => {
+          CatchErr(err);
+        });
+
+      // update password if its present
+      if (password) {
+        updatePassword(auth.currentUser, password)
+          .then(() => {
+            toastSuccess("Password Updated Successfully");
+          })
+          .catch((err) => {
+            CatchErr(err);
+          });
+
+        // update user collection only if username or img is present
+        if (username || img) {
+          await updateUserInfo({ username, img });
+          toastSuccess("Updated profile successfully!");
+
+          // get user info
+          const userInfo = await getUserInfo(id);
+
+          // update user in state or store
+          dispatch(setUser(userInfo));
+          setLoading(false);
+        }
+      }
+    } else toastError("BE_saveProfile: id not found");
+  }
 };
 
 // add user to collection

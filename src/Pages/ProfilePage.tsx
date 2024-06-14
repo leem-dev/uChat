@@ -4,6 +4,7 @@ import Button from "../Components/Button";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import AvatarGenerator from "../utils/AvatarGenerator";
+import { toastError, toastWarn } from "../utils/toast";
 
 function ProfilePage() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,33 @@ function ProfilePage() {
 
   const handleProfileAvatar = () => {
     setAvatar(AvatarGenerator());
+  };
+
+  const handleSaveProfile = () => {
+    // check if the email and username is not empty
+    if (!email || !username) toastError("Email or username cant be empty!");
+
+    // if password is true, confirm password is true
+    let temp_password = password;
+    if (temp_password && temp_password !== confirmPass) {
+      toastError("Passwords must be equal");
+      temp_password = "";
+    }
+
+    // only update email when change occurs
+    let temp_mail = email;
+    if (temp_mail === currentUser.email) temp_mail = "";
+
+    // only update username when change is made
+    let temp_user = username;
+    if (temp_user === currentUser.username) temp_user = "";
+
+    // only update avatar when change is made
+    let temp_avatar = avatar;
+    if (temp_avatar === currentUser.img) temp_avatar = "";
+
+    if (temp_mail || temp_avatar || temp_user || temp_password) {
+    } else toastWarn("Change details before saving!");
   };
 
   return (
@@ -62,7 +90,7 @@ function ProfilePage() {
           value={confirmPass}
           onChange={(e) => setConfirmPass(e.target.value)}
         />
-        <Button text="Update Profile" />
+        <Button text="Update Profile" onClick={handleSaveProfile} />
         <Button text="Delete Account" secondary />
       </div>
     </div>
