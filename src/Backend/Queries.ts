@@ -175,10 +175,10 @@ export const BE_saveProfile = async (
   const { email, username, password, img } = data;
   const id = getStorageUser().id;
 
-  if (id && auth.currentUser) {
-    // update email if its present
-    if (email) {
-      updateEmail(auth.currentUser, email)
+  if (id) {
+    // update email if present
+    if (email && auth.currentUser) {
+      await updateEmail(auth.currentUser, email)
         .then(() => {
           toastSuccess("Email Updated Successfully");
         })
@@ -187,8 +187,8 @@ export const BE_saveProfile = async (
         });
 
       // update password if its present
-      if (password) {
-        updatePassword(auth.currentUser, password)
+      if (password && auth.currentUser) {
+        await updatePassword(auth.currentUser, password)
           .then(() => {
             toastSuccess("Password Updated Successfully");
           })

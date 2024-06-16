@@ -16,6 +16,8 @@ const CatchErr = (err: { code?: string }) => {
     toastError("Firebase client is offline");
   else if (code === "auth/invalid-login-credentials")
     toastError("Invalid Credentials");
+  else if (code === "auth/operation-not-allowed")
+    toastError("Can't change email yet");
   else toastError("An error occurred!");
   console.log(err, err.code);
 };

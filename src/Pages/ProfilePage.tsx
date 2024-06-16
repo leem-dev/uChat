@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import AvatarGenerator from "../utils/AvatarGenerator";
 import { toastError, toastWarn } from "../utils/toast";
+import { BE_saveProfile } from "../Backend/Queries";
 
 function ProfilePage() {
   const [email, setEmail] = useState("");
@@ -12,6 +13,8 @@ function ProfilePage() {
   const [password, setPassword] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [profileLoading, setProfileLoading] = useState(false);
+  const [deleteAccLoading, setDeleteAccLoading] = useState(false);
 
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const dispatch = useDispatch<AppDispatch>();
@@ -25,7 +28,7 @@ function ProfilePage() {
     setAvatar(AvatarGenerator());
   };
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     // check if the email and username is not empty
     if (!email || !username) toastError("Email or username cant be empty!");
 
@@ -49,6 +52,16 @@ function ProfilePage() {
     if (temp_avatar === currentUser.img) temp_avatar = "";
 
     if (temp_mail || temp_avatar || temp_user || temp_password) {
+      await BE_saveProfile(
+        dispatch,
+        {
+          email: temp_mail,
+          username: temp_user,
+          password: temp_password,
+          img: temp_avatar,
+        },
+        setProfileLoading
+      );
     } else toastWarn("Change details before saving!");
   };
 
