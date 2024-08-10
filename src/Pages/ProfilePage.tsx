@@ -35,7 +35,7 @@ function ProfilePage() {
     // if password is true, confirm password is true
     let temp_password = password;
     if (temp_password && temp_password !== confirmPass) {
-      toastError("Passwords must be equal");
+      toastError("Passwords must match");
       temp_password = "";
     }
 

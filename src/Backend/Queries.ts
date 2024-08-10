@@ -174,6 +174,7 @@ export const BE_saveProfile = async (
   setLoading(true);
   const { email, username, password, img } = data;
   const id = getStorageUser().id;
+  console.log(id);
 
   if (id) {
     // update email if present
@@ -284,9 +285,9 @@ const updateUserInfo = async ({
   if (id) {
     await updateDoc(doc(db, usersCollection, id), {
       ...(username && { username }),
-      ...(img && { img }),
       ...(isOnline && { isOnline }),
       ...(isOffline && { isOnline: false }),
+      ...(img && { img }),
       lastSeen: serverTimestamp(),
     });
   }
