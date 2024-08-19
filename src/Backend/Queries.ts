@@ -1,5 +1,6 @@
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   signInWithEmailAndPassword,
   signOut,
   updateEmail,
@@ -135,14 +136,15 @@ export const BE_signIn = (
 export const BE_signOut = (
   dispatch: AppDispatch,
   goTo: NavigateFunction,
-  setLoading: setLoadingType
+  setLoading: setLoadingType,
+  deleteAcc?: boolean
 ) => {
   setLoading(true);
   // logout in firebase
   signOut(auth)
     .then(async () => {
       // set user offline
-      await updateUserInfo({ isOffline: true });
+      if (!deleteAcc) await updateUserInfo({ isOffline: true });
 
       // set currentSelected user to default user
       dispatch(setUser(defaultUser));
@@ -212,6 +214,42 @@ export const BE_saveProfile = async (
     dispatch(setUser(userInfo));
     setLoading(false);
   } else toastError("BE_saveProfile: id not found");
+};
+
+// delete user profile
+export const BE_deleteProfile = async (
+  dispatch: AppDispatch,
+  goTo: NavigateFunction,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+
+  // get all tasklist
+  const userTaskList = await getAllTaskList();
+
+  // loop through user tasklist and delete each
+  if (userTaskList.length > 0) {
+    userTaskList.forEach(async (taskLi) => {
+      if (taskLi.id && taskLi.tasks)
+        await BE_deleteTaskList(taskLi.id, taskLi.tasks, dispatch);
+    });
+  }
+
+  // delete the user info from the collection
+  await deleteDoc(doc(db, usersCollection, getStorageUser().id));
+
+  // delete user account
+  const user = auth.currentUser;
+
+  if (user) {
+    deleteUser(user)
+      .then(async () => {
+        BE_signOut(dispatch, goTo, setLoading, true);
+
+        // window.location.reload();
+      })
+      .catch((err) => CatchErr(err));
+  }
 };
 
 // add user to collection
@@ -365,9 +403,9 @@ export const BE_deleteTaskList = async (
   listId: string,
   tasks: taskType[],
   dispatch: AppDispatch,
-  setLoading: setLoadingType
+  setLoading?: setLoadingType
 ) => {
-  setLoading(true);
+  if (setLoading) setLoading(true);
 
   // looping through tasks and delete
   if (tasks.length > 0) {
@@ -383,7 +421,7 @@ export const BE_deleteTaskList = async (
   const deletedTaskList = await getDoc(listRef);
 
   if (!deletedTaskList.exists()) {
-    setLoading(false);
+    if (setLoading) setLoading(false);
     // dispatch delete task list and update state
     dispatch(deleteTaskList(listId));
   }

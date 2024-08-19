@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import AvatarGenerator from "../utils/AvatarGenerator";
 import { toastError, toastWarn } from "../utils/toast";
-import { BE_saveProfile } from "../Backend/Queries";
+import { BE_deleteProfile, BE_saveProfile } from "../Backend/Queries";
+import { useNavigate } from "react-router-dom";
 
 function ProfilePage() {
   const [email, setEmail] = useState("");
@@ -18,6 +19,7 @@ function ProfilePage() {
 
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
   const dispatch = useDispatch<AppDispatch>();
+  const goTo = useNavigate();
 
   useEffect(() => {
     setEmail(currentUser.email);
@@ -65,6 +67,16 @@ function ProfilePage() {
     } else toastWarn("Change details before saving!");
   };
 
+  const handleDeleteAccount = async () => {
+    if (
+      window.confirm(
+        `Are you sure to delete ${username}? This can't be reversed`
+      )
+    ) {
+      await BE_deleteProfile(dispatch, goTo, setDeleteAccLoading);
+    }
+  };
+
   return (
     <div className="bg-white flex flex-col gap-5 shadow-md max-w-2xl rounded-xl py-5 px-6 md:p-10 md:m-auto m-5 md:mt-10">
       <div className="relative self-center" onClick={handleProfileAvatar}>
@@ -108,7 +120,12 @@ function ProfilePage() {
           onClick={handleSaveProfile}
           loading={profileLoading}
         />
-        <Button text="Delete Account" secondary />
+        <Button
+          text="Delete Account"
+          onClick={handleDeleteAccount}
+          loading={deleteAccLoading}
+          secondary
+        />
       </div>
     </div>
   );
