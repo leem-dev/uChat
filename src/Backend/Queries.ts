@@ -186,32 +186,32 @@ export const BE_saveProfile = async (
         .catch((err) => {
           CatchErr(err);
         });
+    }
 
-      // update password if its present
-      if (password && auth.currentUser) {
-        await updatePassword(auth.currentUser, password)
-          .then(() => {
-            toastSuccess("Password Updated Successfully");
-          })
-          .catch((err) => {
-            CatchErr(err);
-          });
+    // update password if its present
+    if (password && auth.currentUser) {
+      await updatePassword(auth.currentUser, password)
+        .then(() => {
+          toastSuccess("Password Updated Successfully");
+        })
+        .catch((err) => {
+          CatchErr(err);
+        });
+    }
 
-        // update user collection only if username or img is present
-        if (username || img) {
-          await updateUserInfo({ username, img });
-          toastSuccess("Updated profile successfully!");
+    // update user collection only if username or img is present
+    if (username || img) {
+      await updateUserInfo({ username, img });
+      toastSuccess("Updated profile successfully!");
+    }
 
-          // get user info
-          const userInfo = await getUserInfo(id);
+    // get user info
+    const userInfo = await getUserInfo(id);
 
-          // update user in state or store
-          dispatch(setUser(userInfo));
-          setLoading(false);
-        }
-      }
-    } else toastError("BE_saveProfile: id not found");
-  }
+    // update user in state or store
+    dispatch(setUser(userInfo));
+    setLoading(false);
+  } else toastError("BE_saveProfile: id not found");
 };
 
 // add user to collection

@@ -103,7 +103,11 @@ function ProfilePage() {
           value={confirmPass}
           onChange={(e) => setConfirmPass(e.target.value)}
         />
-        <Button text="Update Profile" onClick={handleSaveProfile} />
+        <Button
+          text="Update Profile"
+          onClick={handleSaveProfile}
+          loading={profileLoading}
+        />
         <Button text="Delete Account" secondary />
       </div>
     </div>
