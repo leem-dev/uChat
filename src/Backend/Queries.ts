@@ -241,6 +241,8 @@ export const BE_deleteProfile = async (
   // delete user account
   const user = auth.currentUser;
 
+  console.log("USER TO BE DELETED!", user);
+
   if (user) {
     deleteUser(user)
       .then(async () => {
