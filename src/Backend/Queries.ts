@@ -24,13 +24,20 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
+  orderBy,
   query,
   serverTimestamp,
   setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
-import { defaultUser, setUser, userStorageName } from "../Redux/userSlice";
+import {
+  defaultUser,
+  setUser,
+  setUsers,
+  userStorageName,
+} from "../Redux/userSlice";
 import { AppDispatch } from "../Redux/store";
 import ConvertTime from "../utils/ConvertTime";
 import AvatarGenerator from "../utils/AvatarGenerator";
@@ -254,6 +261,42 @@ export const BE_deleteProfile = async (
   }
 };
 
+// get all users
+export const BE_getAllUsers = async (
+  dispatch: AppDispatch,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+
+  // get all users except the current user signed in, those online ontop
+  const q = query(collection(db, usersCollection), orderBy("isOnline", "desc"));
+  onSnapshot(q, (usersSnapshot) => {
+    let users: userType[] = [];
+
+    usersSnapshot.forEach((user) => {
+      const { img, isOnline, username, email, bio, creationTime, lastSeen } =
+        user.data();
+      users.push({
+        id: user.id,
+        img,
+        isOnline,
+        username,
+        email,
+        bio,
+        creationTime: ConvertTime(creationTime.toDate()),
+        lastSeen: ConvertTime(lastSeen.toDate()),
+      });
+    });
+
+    // take out the current user
+    const id = getStorageUser().id;
+    if (id) {
+      dispatch(setUsers(users.filter((u) => u.id !== id)));
+    }
+    setLoading(false);
+  });
+};
+
 // add user to collection
 const addUserToCollection = async (
   id: string,
@@ -333,7 +376,7 @@ const updateUserInfo = async ({
   }
 };
 
-// -------------------------------TASK LIST-------------------------
+// -------------------------------for TASK LIST-------------------------
 
 // add a single task list
 export const BE_addTaskList = async (
@@ -450,7 +493,7 @@ const getAllTaskList = async () => {
   return taskList;
 };
 
-// ----------------------------TASK-------------------------------
+// ----------------------------for TASK-------------------------------
 
 // delete task
 export const BE_deleteTask = async (
@@ -556,3 +599,5 @@ export const getTasksForTaskList = async (
   dispatch(setTaskListTasks({ listId, tasks }));
   setLoading(false);
 };
+
+// -------------------------------for CHATS-------------------------

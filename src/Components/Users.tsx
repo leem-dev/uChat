@@ -1,9 +1,11 @@
 import React from "react";
 
-type Props = {};
+type UsersPropTypes = {
+  loading: boolean;
+};
 
-function Users({}: Props) {
-  return <div>Users</div>;
+function Users({ loading }: UsersPropTypes) {
+  return <div>{loading ? "LOADING" : "USERS ALREADY HERE"} </div>;
 }
 
 export default Users;

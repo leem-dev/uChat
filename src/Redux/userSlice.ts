@@ -15,7 +15,7 @@ export const defaultUser: userType = {
 };
 
 const initialState = {
-  // user: [],
+  users: [],
   currentUser: defaultUser,
   // currentSelectedUser: null
 };
@@ -34,6 +34,7 @@ const userSlice = createSlice({
     },
     setUsers: (state, action) => {
       // set all users
+      state.users = action.payload;
     },
   },
 });
