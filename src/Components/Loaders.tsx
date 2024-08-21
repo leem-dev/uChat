@@ -49,7 +49,7 @@ export const UserLoader = () => {
   return (
     <div className="animate-pulse flex gap-2 items-center px-5 py-3 border-b-[1px] border-gray-200 ">
       <div className="bg-gray-300 rounded-full w-11 h-11"></div>
-      <div className="flex flex-col gap-2 w-[100%]">
+      <div className="flex flex-col gap-2 w-[70%]">
         <div className="h-3 bg-gray-300 rounded-md"></div>
         <div className="h-3 bg-gray-300 rounded-md"></div>
       </div>
