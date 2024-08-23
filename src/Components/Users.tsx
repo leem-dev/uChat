@@ -11,9 +11,13 @@ type UsersPropTypes = {
 
 function Users({ loading }: UsersPropTypes) {
   const users = useSelector((state: RootState) => state.user.users);
+
+  const handleStartChat = () => {
+    alert("start chat");
+  };
   return loading ? (
     <UsersLoader />
-  ) : Users.length === 0 ? (
+  ) : users.length === 0 ? (
     <div className="p-10">
       No user registered apart from you, tell others to register and start
       chatting
@@ -21,7 +25,12 @@ function Users({ loading }: UsersPropTypes) {
   ) : (
     <FlipMove>
       {users.map((u) => (
-        <UserHeaderProfile user={u} otherUser={true} />
+        <UserHeaderProfile
+          handleClick={handleStartChat}
+          key={u.id}
+          user={u}
+          otherUser={true}
+        />
       ))}
     </FlipMove>
   );
