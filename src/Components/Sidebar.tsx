@@ -9,7 +9,7 @@ type SidebarTypes = {
 function Sidebar({ children, isRight, className }: SidebarTypes) {
   return (
     <div
-      className={`bg-white shadow-md border-2 overflow-scroll ${
+      className={`lg:flex-[0.3] bg-white shadow-md border-2 overflow-scroll ${
         isRight
           ? `rounded-tr-3xl rounded-br-3xl`
           : `rounded-tl-3xl rounded-bl-3xl`
