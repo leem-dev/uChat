@@ -30,3 +30,20 @@ export type taskListType = {
   editMode?: boolean;
   tasks?: taskType[];
 };
+
+export type chatType = {
+  senderId: string;
+  receiverId: string;
+  id?: string;
+  lastMsg?: string;
+  senderToReceiverNewMsgCount?: number;
+  receiverToSenderNewMsgCount?: number;
+  updatedAt?: string;
+};
+
+export type messageType = {
+  senderId: string;
+  content: string;
+  createdAt?: string;
+  id?: string;
+};

@@ -11,6 +11,7 @@ import { toastError, toastSuccess } from "../utils/toast";
 import CatchErr from "../utils/catchErr";
 import {
   authDataType,
+  chatType,
   setLoadingType,
   taskListType,
   taskType,
@@ -36,6 +37,7 @@ import {
 } from "firebase/firestore";
 import {
   defaultUser,
+  setAlertProps,
   setUser,
   setUsers,
   userStorageName,
@@ -55,6 +57,7 @@ import {
   setTaskList,
   setTaskListTasks,
 } from "../Redux/taskListSlice";
+import { setChats } from "../Redux/chatsSlice";
 
 // collection names
 const usersCollection = "users";
@@ -640,8 +643,46 @@ export const BE_startChat = async (
       toastError("BE_startChat: No such document");
     }
     setLoading(false);
+    dispatch(setAlertProps({ open: false }));
   } else {
     toastError("You already started chatting with" + rName);
     setLoading(false);
+    dispatch(setAlertProps({ open: false }));
   }
+};
+
+// get users chats
+export const BE_getChats = async (dispatch: AppDispatch) => {
+  const id = getStorageUser().id;
+  const q = query(
+    collection(db, chatsCollection),
+    or(where("senderId", "==", id), where("receiverId", "==", id)),
+    orderBy("updatedAt", "desc")
+  );
+
+  onSnapshot(q, (chatSnapshot) => {
+    const chats: chatType[] = [];
+
+    chatSnapshot.forEach((chat) => {
+      const {
+        senderId,
+        receiverId,
+        lastMsg,
+        updatedAt,
+        receiverToSenderNewMsgCount,
+        senderToReceiverNewMsgCount,
+      } = chat.data();
+
+      chats.push({
+        id: chat.id,
+        senderId,
+        receiverId,
+        lastMsg,
+        updatedAt,
+        receiverToSenderNewMsgCount,
+        senderToReceiverNewMsgCount,
+      });
+    });
+    dispatch(setChats(chats));
+  });
 };
