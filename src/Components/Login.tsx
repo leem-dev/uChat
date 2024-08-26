@@ -52,7 +52,7 @@ const Login = () => {
 
   return (
     <div className="m-6 w-full md:w-[450px]">
-      <h1 className="text-white text-center font-bold text-4xl mb-10 md:text-6xl">
+      <h1 className="mb-10 text-4xl font-bold text-center text-white md:text-6xl">
         {login ? "Login" : "Register"}
       </h1>
 

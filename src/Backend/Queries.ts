@@ -19,12 +19,14 @@ import {
 import { NavigateFunction } from "react-router-dom";
 import {
   addDoc,
+  and,
   collection,
   deleteDoc,
   doc,
   getDoc,
   getDocs,
   onSnapshot,
+  or,
   orderBy,
   query,
   serverTimestamp,
@@ -601,3 +603,45 @@ export const getTasksForTaskList = async (
 };
 
 // -------------------------------for CHATS-------------------------
+
+// start a chat
+export const BE_startChat = async (
+  dispatch: AppDispatch,
+  rId: string,
+  rName: string,
+  setLoading: setLoadingType
+) => {
+  const sId = getStorageUser().id;
+  setLoading(true);
+
+  // check if chat exists
+  const q = query(
+    collection(db, chatsCollection),
+    or(
+      and(where("senderId", "==", sId), where("receiverId", "==", rId)),
+      and(where("senderId", "==", rId), where("receiverId", "==", sId))
+    )
+  );
+  const res = await getDocs(q);
+
+  // if you find no chat with this two Ids, then create one
+  if (res.empty) {
+    const newChat = await addDoc(collection(db, chatsCollection), {
+      senderId: sId,
+      receiverId: rId,
+      updatedAt: serverTimestamp(),
+      senderToReceiverNewMsgCount: 0,
+      receiverToSenderNewMsgCount: 0,
+      lastMsg: "",
+    });
+
+    const newChatSnapshot = await getDoc(doc(db, newChat.path));
+    if (!newChatSnapshot.exists()) {
+      toastError("BE_startChat: No such document");
+    }
+    setLoading(false);
+  } else {
+    toastError("You already started chatting with" + rName);
+    setLoading(false);
+  }
+};
