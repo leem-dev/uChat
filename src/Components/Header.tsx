@@ -7,7 +7,7 @@ import UserHeaderProfile from "./UserHeaderProfile";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../Redux/store";
 import { useNavigate } from "react-router-dom";
-import { BE_signOut, getStorageUser } from "../Backend/Queries";
+import { BE_getChats, BE_signOut, getStorageUser } from "../Backend/Queries";
 import Spinner from "./Spinner";
 import { setUser } from "../Redux/userSlice";
 
@@ -31,13 +31,14 @@ function Header() {
     }
   }, [dispatch, goTo]);
 
-  // useEffect(() => {
-  //   if (!currentUser?.id) goTo("/auth");
-  // }, [goTo, currentUser]);
-
   useEffect(() => {
     const page = getCurrentPage();
     if (page) goTo("/dashboard/" + page);
+
+    const get = async () => {
+      await BE_getChats(dispatch);
+    };
+    get();
   }, [goTo]);
 
   const handleGoToPage = (page: string) => {
@@ -58,13 +59,13 @@ function Header() {
   };
 
   return (
-    <div className="flex flex-wrap z-10 sm:flex-row gap-5 items-center justify-between drop-shadow-md bg-gradient-to-r from-myBlue to-myPink px-5 py-5 md:py-2 text-white">
+    <div className="z-10 flex flex-wrap items-center justify-between gap-5 px-5 py-5 text-white sm:flex-row drop-shadow-md bg-gradient-to-r from-myBlue to-myPink md:py-2">
       <img
         className="w-[70px] drop-shadow-md cursor-pointer"
         src={uChat}
         alt="img"
       />
-      <div className="flex flex-row-reverse md:flex-row items-center justify-center gap-5 flex-wrap">
+      <div className="flex flex-row-reverse flex-wrap items-center justify-center gap-5 md:flex-row">
         {getCurrentPage() === "chat" ? (
           <Icon
             IconName={FiList}
@@ -98,13 +99,13 @@ function Header() {
           </>
         )}
 
-        <div className="group relative">
+        <div className="relative group">
           <UserHeaderProfile user={currentUser} />
-          <div className="absolute pt-5 hidden group-hover:block w-full min-w-max">
-            <ul className="w-full bg-white overflow-hidden rounded-md shadow-md text-gray-700 pt-1">
+          <div className="absolute hidden w-full pt-5 group-hover:block min-w-max">
+            <ul className="w-full pt-1 overflow-hidden text-gray-700 bg-white rounded-md shadow-md">
               <p
                 onClick={() => handleGoToPage("profile")}
-                className="hover:bg-gray-200 py-2 px-4 block cursor-pointer"
+                className="block px-4 py-2 cursor-pointer hover:bg-gray-200"
               >
                 Profile
               </p>
