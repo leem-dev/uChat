@@ -302,6 +302,41 @@ export const BE_getAllUsers = async (
   });
 };
 
+// get user information
+export const getUserInfo = async (
+  id: string,
+  setLoading?: setLoadingType
+): Promise<userType> => {
+  if (setLoading) setLoading(true);
+  const userRef = doc(db, usersCollection, id);
+  const user = await getDoc(userRef);
+
+  if (user.exists()) {
+    const { img, isOnline, username, email, bio, creationTime, lastSeen } =
+      user.data();
+    if (setLoading) setLoading(false);
+
+    return {
+      id: user.id,
+      img,
+      isOnline,
+      username,
+      email,
+      bio,
+      creationTime: creationTime
+        ? ConvertTime(creationTime.toDate())
+        : "no date yet: userinfo",
+      lastSeen: lastSeen
+        ? ConvertTime(lastSeen.toDate())
+        : "no date yet: userinfo",
+    };
+  } else {
+    if (setLoading) setLoading(false);
+    toastError(`${getUserInfo}: user not found`);
+    return defaultUser;
+  }
+};
+
 // add user to collection
 const addUserToCollection = async (
   id: string,
@@ -320,35 +355,6 @@ const addUserToCollection = async (
     bio: `Hi my name is ${username}. I hope to build amazing projects with typescripts soon`,
   });
   return getUserInfo(id);
-};
-
-// get user information
-const getUserInfo = async (id: string): Promise<userType> => {
-  const userRef = doc(db, usersCollection, id);
-  const user = await getDoc(userRef);
-
-  if (user.exists()) {
-    const { img, isOnline, username, email, bio, creationTime, lastSeen } =
-      user.data();
-
-    return {
-      id: user.id,
-      img,
-      isOnline,
-      username,
-      email,
-      bio,
-      creationTime: creationTime
-        ? ConvertTime(creationTime.toDate())
-        : "no date yet: userinfo",
-      lastSeen: lastSeen
-        ? ConvertTime(lastSeen.toDate())
-        : "no date yet: userinfo",
-    };
-  } else {
-    toastError(`${getUserInfo}: user not found`);
-    return defaultUser;
-  }
 };
 
 // update user info
