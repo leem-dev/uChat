@@ -692,3 +692,10 @@ export const BE_getChats = async (dispatch: AppDispatch) => {
     dispatch(setChats(chats));
   });
 };
+
+// function to check if chat is craeted
+
+export const iCreatedChat = (senderId: string) => {
+  const myId = getStorageUser().id;
+  return myId === senderId;
+};

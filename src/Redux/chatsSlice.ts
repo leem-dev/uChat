@@ -1,6 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { chatType } from "../Types";
 
-const initialState = {
+type chatStateType = {
+  chats: chatType[];
+  isChatsTab: boolean;
+};
+
+const initialState: chatStateType = {
   chats: [],
   isChatsTab: false,
 };

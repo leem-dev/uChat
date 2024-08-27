@@ -25,7 +25,8 @@ function ChatsProfile({ userId, chat }: ChatsProfileType) {
 
   const handleSelectedChat = () => {};
 
-  return <UserHeaderProfile handleClick={handleSelectedChat} />;
+  // return <UserHeaderProfile handleClick={handleSelectedChat} user={user} />;
+  return <h2>User</h2>;
 }
 
 export default ChatsProfile;
