@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { chatType, userType } from "../Types";
-import { getUserInfo } from "../Backend/Queries";
+import { getUserInfo, iCreatedChat } from "../Backend/Queries";
 import { toastError } from "../utils/toast";
 import UserHeaderProfile from "./UserHeaderProfile";
+import { defaultUser } from "../Redux/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "../Redux/store";
+import { setCurrentSelectedChat } from "../Redux/chatsSlice";
 
 type ChatsProfileType = {
   userId?: string;
@@ -11,7 +15,18 @@ type ChatsProfileType = {
 
 function ChatsProfile({ userId, chat }: ChatsProfileType) {
   const [userLoading, setUserLoading] = useState(false);
-  const [user, setUser] = useState<userType>();
+  const [user, setUser] = useState<userType>(defaultUser);
+  const dispatch = useDispatch<AppDispatch>();
+  const currentSelectedChat = useSelector(
+    (state: RootState) => state.chat.currentSelectedChat
+  );
+  const {
+    id: chatId,
+    senderId,
+    lastMsg,
+    receiverToSenderNewMsgCount,
+    senderToReceiverNewMsgCount,
+  } = chat;
 
   useEffect(() => {
     const getUser = async () => {
@@ -23,10 +38,32 @@ function ChatsProfile({ userId, chat }: ChatsProfileType) {
     getUser();
   }, [userId]);
 
-  const handleSelectedChat = () => {};
+  const handleSelectedChat = () => {
+    dispatch(
+      setCurrentSelectedChat({
+        ...user,
+        chatId,
+        receiverToSenderNewMsgCount,
+        senderToReceiverNewMsgCount,
+      })
+    );
+  };
 
-  // return <UserHeaderProfile handleClick={handleSelectedChat} user={user} />;
-  return <h2>User</h2>;
+  return (
+    <UserHeaderProfile
+      handleClick={handleSelectedChat}
+      user={user}
+      otherUser
+      loading={userLoading}
+      lastMsg={lastMsg}
+      newMsgCount={
+        iCreatedChat(senderId)
+          ? receiverToSenderNewMsgCount
+          : senderToReceiverNewMsgCount
+      }
+      isSelected={userId === currentSelectedChat.id}
+    />
+  );
 }
 
 export default ChatsProfile;

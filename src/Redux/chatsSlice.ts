@@ -1,14 +1,17 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { chatType } from "../Types";
+import { chatType, userType } from "../Types";
+import { defaultUser } from "./userSlice";
 
 type chatStateType = {
   chats: chatType[];
   isChatsTab: boolean;
+  currentSelectedChat: userType;
 };
 
 const initialState: chatStateType = {
   chats: [],
   isChatsTab: false,
+  currentSelectedChat: defaultUser,
 };
 
 const chatsSlice = createSlice({
@@ -22,8 +25,12 @@ const chatsSlice = createSlice({
       const chats = action.payload;
       state.chats = chats;
     },
+    setCurrentSelectedChat: (state, action) => {
+      state.currentSelectedChat = action.payload;
+    },
   },
 });
 
-export const { setIsChatsTab, setChats } = chatsSlice.actions;
+export const { setIsChatsTab, setChats, setCurrentSelectedChat } =
+  chatsSlice.actions;
 export default chatsSlice.reducer;
