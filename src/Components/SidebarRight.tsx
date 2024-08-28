@@ -8,20 +8,39 @@ function SidebarRight() {
   const currentSelectedChat = useSelector(
     (state: RootState) => state.chat.currentSelectedChat
   );
+
+  const { id, email, isOnline, username, bio, lastSeen, creationTime } =
+    currentSelectedChat;
   return (
-    <Sidebar isRight>
+    <Sidebar isRight className="hidden lg:block">
       <div className="flex flex-col">
         <div className="sticky top-0 flex items-center justify-center h-16 bg-gray-200">
-          {currentSelectedChat.username && (
-            <p className="text-xl font-bold">{currentSelectedChat.username}</p>
-          )}
+          {username && <p className="text-xl font-bold">{username}</p>}
         </div>
-        {currentSelectedChat.id ? (
-          <div className="flex flex-col p-10">
+        {id ? (
+          <div className="flex flex-col gap-10 p-10">
             <Avatar
               currentUser={currentSelectedChat}
               handleOnClick={() => null}
             />
+            <div className="flex flex-col gap-2">
+              <p className="text-gray-400">
+                Username: <span className="text-gray-900">{username}</span>
+              </p>
+              <hr />
+              <p className="text-gray-400">
+                Email: <span className="text-gray-900">{email}</span>
+              </p>
+              <p className="text-gray-400">
+                Joined In: <span className="text-gray-900">{creationTime}</span>
+              </p>
+              <p className="text-gray-400">
+                Last Seen: <span className="text-gray-900">{lastSeen}</span>
+              </p>
+              <p className="text-gray-400">
+                Bio: <span className="text-gray-900">{bio}</span>
+              </p>
+            </div>
           </div>
         ) : (
           <div className="p-10">
