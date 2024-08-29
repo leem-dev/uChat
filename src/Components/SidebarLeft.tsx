@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "./Sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
-import { setIsChatsTab } from "../Redux/chatsSlice";
+import { setCurrentSelectedChat, setIsChatsTab } from "../Redux/chatsSlice";
 import Chats from "./Chats";
 import Users from "./Users";
 import { BE_getAllUsers } from "../Backend/Queries";
+import { defaultUser } from "../Redux/userSlice";
 
 type Props = {};
 
@@ -21,6 +22,11 @@ function SidebarLeft({}: Props) {
 
     get();
   }, []);
+
+  const handleSelectUsersTab = () => {
+    dispatch(setIsChatsTab(false));
+    dispatch(setCurrentSelectedChat(defaultUser));
+  };
 
   return (
     <Sidebar
@@ -39,7 +45,7 @@ function SidebarLeft({}: Props) {
             Chats
           </p>
           <p
-            onClick={() => dispatch(setIsChatsTab(false))}
+            onClick={handleSelectUsersTab}
             className={`p-5 flex-1 text-center font-bold cursor-pointer  ${
               !isChatsTab
                 ? `bg-gradient-to-r from-myBlue to-myPink text-white`

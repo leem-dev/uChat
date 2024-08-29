@@ -55,7 +55,7 @@ function ChatsProfile({ userId, chat }: ChatsProfileType) {
       user={user}
       otherUser
       loading={userLoading}
-      lastMsg={lastMsg}
+      lastMsg={lastMsg || "Last message is supposed to be here"}
       newMsgCount={
         iCreatedChat(senderId)
           ? receiverToSenderNewMsgCount
