@@ -81,10 +81,9 @@ function ProfilePage() {
   return (
     <div className="flex flex-col max-w-2xl gap-5 px-6 py-5 m-5 bg-white shadow-md rounded-xl md:p-10 md:m-auto md:mt-10">
       <Avatar
-        avatar={avatar}
         currentUser={currentUser}
         handleOnClick={handleProfileAvatar}
-        isOnline={false}
+        isOnline
       />
       <p className="text-sm text-center text-gray-400">
         Note: Click on image to temporary change it, when you like it, then save
