@@ -84,6 +84,7 @@ function ProfilePage() {
         avatar={avatar}
         currentUser={currentUser}
         handleOnClick={handleProfileAvatar}
+        isOnline
       />
       <p className="text-sm text-center text-gray-400">
         Note: Click on image to temporary change it, when you like it, then save
