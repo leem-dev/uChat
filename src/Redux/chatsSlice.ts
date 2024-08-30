@@ -6,12 +6,14 @@ type chatStateType = {
   chats: chatType[];
   isChatsTab: boolean;
   currentSelectedChat: userType;
+  rightSidebarOpen: boolean;
 };
 
 const initialState: chatStateType = {
   chats: [],
   isChatsTab: false,
   currentSelectedChat: defaultUser,
+  rightSidebarOpen: true,
 };
 
 const chatsSlice = createSlice({
@@ -28,9 +30,16 @@ const chatsSlice = createSlice({
     setCurrentSelectedChat: (state, action) => {
       state.currentSelectedChat = action.payload;
     },
+    setRightSidebarOpen: (state) => {
+      state.rightSidebarOpen = !state.rightSidebarOpen;
+    },
   },
 });
 
-export const { setIsChatsTab, setChats, setCurrentSelectedChat } =
-  chatsSlice.actions;
+export const {
+  setIsChatsTab,
+  setChats,
+  setCurrentSelectedChat,
+  setRightSidebarOpen,
+} = chatsSlice.actions;
 export default chatsSlice.reducer;

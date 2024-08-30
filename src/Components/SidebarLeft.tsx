@@ -13,6 +13,9 @@ type Props = {};
 function SidebarLeft({}: Props) {
   const [usersLoading, setUsersLoading] = useState(false);
   const isChatsTab = useSelector((state: RootState) => state.chat.isChatsTab);
+  const rightSidebarOpen = useSelector(
+    (state: RootState) => state.chat.rightSidebarOpen
+  );
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -30,7 +33,11 @@ function SidebarLeft({}: Props) {
 
   return (
     <Sidebar
-      className={`flex-[0.8] absolute md:relative z-10 md:z-0 w-[80%] h-[80%] md:h-full md:w-full`}
+      className={`flex-[0.8] absolute md:relative z-10 md:z-0 w-[80%] h-[80%] md:h-full md:w-full ${
+        rightSidebarOpen
+          ? `translate-x-0`
+          : `-translate-x-full md:translate-x-0`
+      }`}
     >
       <div className="flex flex-col">
         <div className="sticky top-0 z-10 flex">

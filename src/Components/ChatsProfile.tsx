@@ -6,7 +6,10 @@ import UserHeaderProfile from "./UserHeaderProfile";
 import { defaultUser } from "../Redux/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
-import { setCurrentSelectedChat } from "../Redux/chatsSlice";
+import {
+  setCurrentSelectedChat,
+  setRightSidebarOpen,
+} from "../Redux/chatsSlice";
 
 type ChatsProfileType = {
   userId?: string;
@@ -47,6 +50,9 @@ function ChatsProfile({ userId, chat }: ChatsProfileType) {
         senderToReceiverNewMsgCount,
       })
     );
+
+    // close sidebar
+    dispatch(setRightSidebarOpen());
   };
 
   return (
