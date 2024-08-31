@@ -12,6 +12,7 @@ import CatchErr from "../utils/catchErr";
 import {
   authDataType,
   chatType,
+  messageType,
   setLoadingType,
   taskListType,
   taskType,
@@ -693,9 +694,68 @@ export const BE_getChats = async (dispatch: AppDispatch) => {
   });
 };
 
-// function to check if chat is craeted
+// get users messages
+export const BE_getMsgs = async (dispatch: AppDispatch) => {};
 
+export const BE_sendMsgs = async (
+  chatId: string,
+  data: messageType,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+
+  const res = await addDoc(
+    collection(db, chatsCollection, chatId, messagesCollection),
+    {
+      ...data,
+      createdAt: serverTimestamp(),
+    }
+  );
+
+  const newMsg = await getDoc(doc(db, res.path));
+  if (newMsg.exists()) {
+    setLoading(false);
+    // reset new message count
+    await updateNewMsgCount(chatId, true);
+    await updateLastMsg(chatId, newMsg.data().content);
+    await updateUserInfo({}); // update last seen
+  }
+};
+
+// function to check if chat is created
 export const iCreatedChat = (senderId: string) => {
   const myId = getStorageUser().id;
   return myId === senderId;
+};
+
+// update new message count for user
+export const updateNewMsgCount = async (chatId: string, reset?: boolean) => {
+  const chat = await getDoc(doc(db, chatsCollection, chatId));
+
+  let senderToReceiverNewMsgCount = chat.data()?.senderToReceiverNewMsgCount;
+  let receiverToSenderNewMsgCount = chat.data()?.receiverToSenderNewMsgCount;
+
+  if (iCreatedChat(chat.data()?.senderId)) {
+    if (reset) receiverToSenderNewMsgCount = 0;
+    else senderToReceiverNewMsgCount++;
+  } else {
+    if (reset) senderToReceiverNewMsgCount = 0;
+    else receiverToSenderNewMsgCount++;
+  }
+
+  await updateDoc(doc(db, chatsCollection, chatId), {
+    updatedAt: serverTimestamp(),
+    senderToReceiverNewMsgCount,
+    receiverToSenderNewMsgCount,
+  });
+};
+
+// update last message
+const updateLastMsg = async (chatId: string, lastMsg: string) => {
+  await updateNewMsgCount(chatId);
+  // await message count here
+  await updateDoc(doc(db, chatsCollection, chatId), {
+    lastMsg,
+    updated: serverTimestamp(),
+  });
 };
