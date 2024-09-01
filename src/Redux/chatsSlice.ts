@@ -7,6 +7,7 @@ type chatStateType = {
   isChatsTab: boolean;
   currentSelectedChat: userType;
   rightSidebarOpen: boolean;
+  currentMessages: messageType[];
 };
 
 const initialState: chatStateType = {
@@ -14,6 +15,7 @@ const initialState: chatStateType = {
   isChatsTab: false,
   currentSelectedChat: defaultUser,
   rightSidebarOpen: true,
+  currentMessages: [],
 };
 
 const chatsSlice = createSlice({
@@ -33,6 +35,9 @@ const chatsSlice = createSlice({
     setRightSidebarOpen: (state) => {
       state.rightSidebarOpen = !state.rightSidebarOpen;
     },
+    setCurrentMessages: (state, action) => {
+      state.currentMessages = action.payload;
+    },
   },
 });
 
@@ -41,5 +46,6 @@ export const {
   setChats,
   setCurrentSelectedChat,
   setRightSidebarOpen,
+  setCurrentMessages,
 } = chatsSlice.actions;
 export default chatsSlice.reducer;

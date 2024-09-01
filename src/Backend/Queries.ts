@@ -58,7 +58,7 @@ import {
   setTaskList,
   setTaskListTasks,
 } from "../Redux/taskListSlice";
-import { setChats } from "../Redux/chatsSlice";
+import { setChats, setCurrentMessages } from "../Redux/chatsSlice";
 
 // collection names
 const usersCollection = "users";
@@ -289,8 +289,12 @@ export const BE_getAllUsers = async (
         username,
         email,
         bio,
-        creationTime: ConvertTime(creationTime.toDate()),
-        lastSeen: ConvertTime(lastSeen.toDate()),
+        creationTime: creationTime
+          ? ConvertTime(creationTime.toDate())
+          : "no date yet: all users creation time",
+        lastSeen: creationTime
+          ? ConvertTime(lastSeen.toDate())
+          : "no date yet: all users last seen",
       });
     });
 
@@ -695,7 +699,37 @@ export const BE_getChats = async (dispatch: AppDispatch) => {
 };
 
 // get users messages
-export const BE_getMsgs = async (dispatch: AppDispatch) => {};
+export const BE_getMsgs = async (
+  dispatch: AppDispatch,
+  chatId: string,
+  setLoading: setLoadingType
+) => {
+  setLoading(true);
+
+  const q = query(
+    collection(db, chatsCollection, chatId, messagesCollection),
+    orderBy("createdAt", "asc")
+  );
+
+  onSnapshot(q, (messagesSnapshot) => {
+    let msgs: messageType[] = [];
+
+    messagesSnapshot.forEach((msg) => {
+      const { senderId, content, createdAt } = msg.data();
+      msgs.push({
+        id: msg.id,
+        senderId,
+        content,
+        createdAt: createdAt
+          ? ConvertTime(createdAt.toDate())
+          : "no date yet: all messages",
+      });
+    });
+
+    dispatch(setCurrentMessages(msgs));
+    setLoading(false);
+  });
+};
 
 export const BE_sendMsgs = async (
   chatId: string,
