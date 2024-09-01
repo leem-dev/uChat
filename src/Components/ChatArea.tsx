@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Icon from "./Icon";
 import {
   BsFillSendFill,
@@ -8,15 +8,16 @@ import {
 } from "react-icons/bs";
 import { ImAttachment } from "react-icons/im";
 import Input from "./Input";
+import FlipMove from "react-flip-move";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import { setRightSidebarOpen } from "../Redux/chatsSlice";
-import { BE_getMsgs, getStorageUser } from "../Backend/Queries";
+import { BE_getMsgs, BE_sendMsgs, getStorageUser } from "../Backend/Queries";
 import { MessagesLoader } from "./Loaders";
+import { toastInfo } from "../utils/toast";
 
-type Props = {};
-
-function ChatArea({}: Props) {
+function ChatArea() {
+  const bottomContainerRef = useRef<HTMLDivElement>(null);
   const [msg, setMsg] = useState("");
   const [getMsgsLoading, setGetMsgsLoading] = useState(false);
   const [createMsgLoading, setCreateMsgLoading] = useState(false);
@@ -28,14 +29,30 @@ function ChatArea({}: Props) {
     (state: RootState) => state.chat.currentMessages
   );
 
-  useEffect(() => {
-    const chatId = currentSelectedChat.chatId;
+  const chatId = currentSelectedChat.chatId;
 
+  useEffect(() => {
     const get = async () => {
       if (chatId) await BE_getMsgs(dispatch, chatId, setGetMsgsLoading);
     };
     get();
   }, [currentSelectedChat.id]);
+
+  const handleSendMsg = async () => {
+    if (msg.trim()) {
+      const data = {
+        senderId: getStorageUser().id,
+        content: msg,
+      };
+      setMsg("");
+      if (chatId) await BE_sendMsgs(chatId, data, setCreateMsgLoading);
+      if (bottomContainerRef)
+        bottomContainerRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else toastInfo("Enter some text messages!");
+  };
+  const checkEnter = (e: any) => {
+    if (e.key === "Enter") handleSendMsg();
+  };
 
   return (
     <div className="flex-1 lg:flex-[0.4] max-h-full flex flex-col px-2 md:px-5 gap-2 ">
@@ -43,7 +60,7 @@ function ChatArea({}: Props) {
         <MessagesLoader />
       ) : (
         <div className="flex flex-col flex-1 max-h-screen gap-2 overflow-y-scroll shadow-inner">
-          <FlipMove>
+          <FlipMove className="flex flex-col flex-1 gap-5">
             {messages.map((msg) => {
               const myId = getStorageUser().id;
               if (msg.senderId === myId) {
@@ -52,13 +69,15 @@ function ChatArea({}: Props) {
                     {msg.content}
                   </div>
                 );
-              }
+              } else
+                return (
+                  <div className="self-start max-w-md px-10 py-3 text-xs text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md">
+                    {msg.content}
+                  </div>
+                );
             })}
           </FlipMove>
-
-          <div className="self-start max-w-md px-10 py-3 text-xs text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md">
-            Hi there! can you hear me
-          </div>
+          <div ref={bottomContainerRef} className="flex pb-36"></div>
         </div>
       )}
 
@@ -81,6 +100,8 @@ function ChatArea({}: Props) {
             onChange={(e) => setMsg(e.target.value)}
             name={`Enter message to ${currentSelectedChat?.username}`}
             className="border-none outline-none text-sm md:text-[15px]"
+            onKeyDown={checkEnter}
+            disabled={createMsgLoading}
           />
           <Icon
             IconName={ImAttachment}
@@ -93,7 +114,12 @@ function ChatArea({}: Props) {
         </div>
 
         <div className="flex items-center justify-center">
-          <Icon IconName={BsFillSendFill} reduceOpacityOnHover={false} />
+          <Icon
+            onClick={handleSendMsg}
+            IconName={BsFillSendFill}
+            reduceOpacityOnHover={false}
+            loading={createMsgLoading}
+          />
         </div>
       </div>
     </div>

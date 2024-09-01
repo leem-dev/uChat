@@ -292,7 +292,7 @@ export const BE_getAllUsers = async (
         creationTime: creationTime
           ? ConvertTime(creationTime.toDate())
           : "no date yet: all users creation time",
-        lastSeen: creationTime
+        lastSeen: lastSeen
           ? ConvertTime(lastSeen.toDate())
           : "no date yet: all users last seen",
       });
