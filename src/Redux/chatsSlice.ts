@@ -1,11 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { chatType, userType } from "../Types";
+import { chatType, messageType, userType } from "../Types";
 import { defaultUser } from "./userSlice";
 
 type chatStateType = {
   chats: chatType[];
   isChatsTab: boolean;
-  currentSelectedChat: userType;
+  currentSelectedChat: userType & {
+    chatId?: string;
+    senderToReceiverNewMsgCount?: number;
+    receiverToSenderNewMsgCount?: number;
+  };
   rightSidebarOpen: boolean;
   currentMessages: messageType[];
 };

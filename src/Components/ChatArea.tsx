@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "./Icon";
 import {
   BsFillSendFill,
@@ -11,26 +11,56 @@ import Input from "./Input";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "../Redux/store";
 import { setRightSidebarOpen } from "../Redux/chatsSlice";
+import { BE_getMsgs, getStorageUser } from "../Backend/Queries";
+import { MessagesLoader } from "./Loaders";
 
 type Props = {};
 
 function ChatArea({}: Props) {
   const [msg, setMsg] = useState("");
+  const [getMsgsLoading, setGetMsgsLoading] = useState(false);
+  const [createMsgLoading, setCreateMsgLoading] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const currentSelectedChat = useSelector(
     (state: RootState) => state.chat.currentSelectedChat
   );
+  const messages = useSelector(
+    (state: RootState) => state.chat.currentMessages
+  );
+
+  useEffect(() => {
+    const chatId = currentSelectedChat.chatId;
+
+    const get = async () => {
+      if (chatId) await BE_getMsgs(dispatch, chatId, setGetMsgsLoading);
+    };
+    get();
+  }, [currentSelectedChat.id]);
 
   return (
     <div className="flex-1 lg:flex-[0.4] max-h-full flex flex-col px-2 md:px-5 gap-2 ">
-      <div className="flex flex-col flex-1 max-h-screen gap-2 overflow-y-scroll border-2 border-black shadow-inner">
-        <div className="self-end max-w-md px-10 py-3 text-xs text-white border-2 border-white rounded-t-full rounded-bl-full shadow-md bg-gradient-to-r from-myBlue to-myPink ">
-          Hello there! can you see me
+      {getMsgsLoading ? (
+        <MessagesLoader />
+      ) : (
+        <div className="flex flex-col flex-1 max-h-screen gap-2 overflow-y-scroll shadow-inner">
+          <FlipMove>
+            {messages.map((msg) => {
+              const myId = getStorageUser().id;
+              if (msg.senderId === myId) {
+                return (
+                  <div className="self-end max-w-md px-10 py-3 text-xs text-white border-2 border-white rounded-t-full rounded-bl-full shadow-md bg-gradient-to-r from-myBlue to-myPink ">
+                    {msg.content}
+                  </div>
+                );
+              }
+            })}
+          </FlipMove>
+
+          <div className="self-start max-w-md px-10 py-3 text-xs text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md">
+            Hi there! can you hear me
+          </div>
         </div>
-        <div className="self-start max-w-md px-10 py-3 text-xs text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md">
-          Hi there! can you hear me
-        </div>
-      </div>
+      )}
 
       <div className="flex gap-1 md:gap-5">
         <div className="bg-white p-[2px] flex-1 rounded-full shadow-md flex items-center gap-2 border-2 border-gray-300">
