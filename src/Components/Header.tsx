@@ -20,6 +20,9 @@ function Header() {
   const goTo = useNavigate();
   const dispatch = useDispatch();
   const currentUser = useSelector((state: RootState) => state.user.currentUser);
+  const hasNewMessage = useSelector(
+    (state: RootState) => state.chat.hasNewMessages
+  );
 
   const userDetails = getStorageUser();
 
@@ -82,7 +85,7 @@ function Header() {
 
             <Icon
               IconName={BsFillChatFill}
-              ping={true}
+              ping={hasNewMessage}
               onClick={() => handleGoToPage("chat")}
               reduceOpacityOnHover={false}
             />
@@ -92,7 +95,7 @@ function Header() {
             <AddListBoard />
             <Icon
               IconName={BsFillChatFill}
-              ping={true}
+              ping={hasNewMessage}
               onClick={() => handleGoToPage("chat")}
               reduceOpacityOnHover={false}
             />
