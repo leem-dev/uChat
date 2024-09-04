@@ -1,10 +1,8 @@
 import React from "react";
 
-type Props = {};
-
-function Spinner({}: Props) {
+function Spinner() {
   return (
-    <div className="border-2 animate-spin border-t-myBlue w-5 h-5 rounded-full"></div>
+    <p className="w-5 h-5 border-2 rounded-full animate-spin border-t-myBlue"></p>
   );
 }
 

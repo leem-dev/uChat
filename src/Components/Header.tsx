@@ -112,7 +112,7 @@ function Header() {
               >
                 Profile
               </p>
-              <p
+              <div
                 onClick={() => !logoutLoading && handleSignOut()}
                 className={`hover:bg-gray-200 py-2 px-4 cursor-pointer flex items-center gap-4 ${
                   logoutLoading && "cursor-wait"
@@ -120,7 +120,7 @@ function Header() {
               >
                 Logout
                 {logoutLoading && <Spinner />}
-              </p>
+              </div>
             </ul>
           </div>
         </div>
