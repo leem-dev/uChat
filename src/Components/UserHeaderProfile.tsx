@@ -46,7 +46,7 @@ const UserHeaderProfile = forwardRef(
             } ${isSelected && `ring-gray-400`}`}
           />
           <span
-            className={`absolute w-4 h-4 bg-green-400 border-2 border-gray-800 rounded-full -top-1 left-7 ${
+            className={`absolute w-4 h-4 border-2 border-gray-800 rounded-full -top-1 left-7 ${
               user.isOnline ? `bg-green-400` : `bg-gray-400`
             }`}
           ></span>

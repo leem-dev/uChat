@@ -63,18 +63,34 @@ function ChatArea() {
           <FlipMove className="flex flex-col flex-1 gap-5">
             {messages.map((msg) => {
               const myId = getStorageUser().id;
-              if (msg.senderId === myId) {
-                return (
-                  <div className="self-end max-w-md px-10 py-3 text-xs text-white border-2 border-white rounded-t-full rounded-bl-full shadow-md bg-gradient-to-r from-myBlue to-myPink ">
-                    {msg.content}
-                  </div>
-                );
-              } else
-                return (
-                  <div className="self-start max-w-md px-10 py-3 text-xs text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md">
-                    {msg.content}
-                  </div>
-                );
+              const isMyMessage = msg.senderId === myId;
+              return (
+                <div
+                  key={msg.id}
+                  className={`max-w-md px-10 py-3 text-xs ${
+                    isMyMessage
+                      ? "self-end text-white border-2 border-white rounded-t-full rounded-bl-full shadow-md bg-gradient-to-r from-myBlue to-myPink"
+                      : "self-start text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md"
+                  }`}
+                >
+                  {msg.content}
+                </div>
+              );
+              // if (msg.senderId === myId) {
+              //   return (
+              //     <div
+              //       key={msg.id}
+              //       className="self-end max-w-md px-10 py-3 text-xs text-white border-2 border-white rounded-t-full rounded-bl-full shadow-md bg-gradient-to-r from-myBlue to-myPink "
+              //     >
+              //       {msg.content}
+              //     </div>
+              //   );
+              // } else
+              //   return (
+              //     <div className="self-start max-w-md px-10 py-3 text-xs text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md">
+              //       {msg.content}
+              //     </div>
+              //   );
             })}
           </FlipMove>
           <div ref={bottomContainerRef} className="flex pb-36"></div>

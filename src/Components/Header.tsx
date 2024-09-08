@@ -39,7 +39,7 @@ function Header() {
     if (page) goTo("/dashboard/" + page);
 
     const get = async () => {
-      await BE_getChats(dispatch);
+      if (userDetails?.id) await BE_getChats(dispatch);
     };
     get();
   }, [goTo]);
@@ -112,15 +112,15 @@ function Header() {
               >
                 Profile
               </p>
-              <div
+              <button
                 onClick={() => !logoutLoading && handleSignOut()}
-                className={`hover:bg-gray-200 py-2 px-4 cursor-pointer flex items-center gap-4 ${
+                className={`hover:bg-gray-200 w-full py-2 px-4 cursor-pointer flex items-center gap-4 ${
                   logoutLoading && "cursor-wait"
                 }`}
               >
                 Logout
                 {logoutLoading && <Spinner />}
-              </div>
+              </button>
             </ul>
           </div>
         </div>

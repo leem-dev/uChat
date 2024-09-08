@@ -83,6 +83,7 @@ function ProfilePage() {
       <Avatar
         currentUser={currentUser}
         handleOnClick={handleProfileAvatar}
+        avatar={avatar}
         isOnline
       />
       <p className="text-sm text-center text-gray-400">

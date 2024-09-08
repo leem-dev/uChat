@@ -189,7 +189,7 @@ export const BE_saveProfile = async (
   setLoading(true);
   const { email, username, password, img } = data;
   const id = getStorageUser().id;
-  console.log(id);
+  console.log("this is the id:", id);
 
   if (id) {
     // update email if present
@@ -665,6 +665,8 @@ export const BE_startChat = async (
 // get users chats
 export const BE_getChats = async (dispatch: AppDispatch) => {
   const id = getStorageUser().id;
+  console.log("ID", getStorageUser());
+
   const q = query(
     collection(db, chatsCollection),
     or(where("senderId", "==", id), where("receiverId", "==", id)),
