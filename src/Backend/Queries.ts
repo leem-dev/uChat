@@ -177,7 +177,7 @@ export const BE_signOut = (
 export const getStorageUser = () => {
   const user = localStorage.getItem(userStorageName);
   if (user) return JSON.parse(user);
-  else return null;
+  else return "";
 };
 
 // save user profile
@@ -189,7 +189,6 @@ export const BE_saveProfile = async (
   setLoading(true);
   const { email, username, password, img } = data;
   const id = getStorageUser().id;
-  console.log("this is the id:", id);
 
   if (id) {
     // update email if present
@@ -237,33 +236,33 @@ export const BE_deleteProfile = async (
 ) => {
   setLoading(true);
 
-  // get all tasklist
-  const userTaskList = await getAllTaskList();
+  if (getStorageUser().id) {
+    // get all tasklist
+    const userTaskList = await getAllTaskList();
 
-  // loop through user tasklist and delete each
-  if (userTaskList.length > 0) {
-    userTaskList.forEach(async (taskLi) => {
-      if (taskLi.id && taskLi.tasks)
-        await BE_deleteTaskList(taskLi.id, taskLi.tasks, dispatch);
-    });
-  }
+    // loop through user tasklist and delete each
+    if (userTaskList.length > 0) {
+      userTaskList.forEach(async (taskLi) => {
+        if (taskLi.id && taskLi.tasks)
+          await BE_deleteTaskList(taskLi.id, taskLi.tasks, dispatch);
+      });
+    }
 
-  // delete the user info from the collection
-  await deleteDoc(doc(db, usersCollection, getStorageUser().id));
+    // delete the user info from the collection
+    await deleteDoc(doc(db, usersCollection, getStorageUser().id));
 
-  // delete user account
-  const user = auth.currentUser;
+    // delete user account
+    const user = auth.currentUser;
 
-  console.log("USER TO BE DELETED!", user);
+    if (user) {
+      deleteUser(user)
+        .then(async () => {
+          BE_signOut(dispatch, goTo, setLoading, true);
 
-  if (user) {
-    deleteUser(user)
-      .then(async () => {
-        BE_signOut(dispatch, goTo, setLoading, true);
-
-        // window.location.reload();
-      })
-      .catch((err) => CatchErr(err));
+          // window.location.reload();
+        })
+        .catch((err) => CatchErr(err));
+    }
   }
 };
 
@@ -430,12 +429,14 @@ export const BE_getTaskList = async (
 ) => {
   setLoading(true);
 
-  // get user task list
-  const taskList = await getAllTaskList();
+  if (getStorageUser().id) {
+    // get user task list
+    const taskList = await getAllTaskList();
 
-  //  get taskList from firestore
-  dispatch(setTaskList(taskList));
-  setLoading(false);
+    //  get taskList from firestore
+    dispatch(setTaskList(taskList));
+    setLoading(false);
+  }
 };
 
 // save task list title
@@ -490,9 +491,11 @@ export const BE_deleteTaskList = async (
 
 // get all user tasklist
 const getAllTaskList = async () => {
+  const id = getStorageUser().id;
+
   const q = query(
     collection(db, taskListCollection),
-    where("userId", "==", getStorageUser().id)
+    where("userId", "==", id)
   );
   const taskListSnapshot = await getDocs(q);
   const taskList: taskListType[] = [];
@@ -665,7 +668,6 @@ export const BE_startChat = async (
 // get users chats
 export const BE_getChats = async (dispatch: AppDispatch) => {
   const id = getStorageUser().id;
-  console.log("ID", getStorageUser());
 
   const q = query(
     collection(db, chatsCollection),
