@@ -15,6 +15,7 @@ import { setRightSidebarOpen } from "../Redux/chatsSlice";
 import { BE_getMsgs, BE_sendMsgs, getStorageUser } from "../Backend/Queries";
 import { MessagesLoader } from "./Loaders";
 import { toastInfo } from "../utils/toast";
+import EmojiPicker from "emoji-picker-react";
 
 function ChatArea() {
   const bottomContainerRef = useRef<HTMLDivElement>(null);
@@ -76,21 +77,6 @@ function ChatArea() {
                   {msg.content}
                 </div>
               );
-              // if (msg.senderId === myId) {
-              //   return (
-              //     <div
-              //       key={msg.id}
-              //       className="self-end max-w-md px-10 py-3 text-xs text-white border-2 border-white rounded-t-full rounded-bl-full shadow-md bg-gradient-to-r from-myBlue to-myPink "
-              //     >
-              //       {msg.content}
-              //     </div>
-              //   );
-              // } else
-              //   return (
-              //     <div className="self-start max-w-md px-10 py-3 text-xs text-black bg-gray-300 border-2 border-white rounded-t-full rounded-br-full shadow-md">
-              //       {msg.content}
-              //     </div>
-              //   );
             })}
           </FlipMove>
           <div ref={bottomContainerRef} className="flex pb-36"></div>
@@ -110,6 +96,7 @@ function ChatArea() {
             IconName={BsFillEmojiSunglassesFill}
             className="hidden text-gray-500 md:block"
             size={15}
+            onClick={() => <EmojiPicker height={500} width={400} />}
           />
           <Input
             value={msg}
